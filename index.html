@@ -63,10 +63,9 @@
                 const schedule = [];
                 const daysInMonth = 31;
                 
-                // Use a fixed seed for consistent randomization
-                let seed = 12345;
+                // Use seed based on timestamp for truly random reset
+                let seed = useSeed ? 12345 : Date.now();
                 const seededRandom = () => {
-                    if (!useSeed) return Math.random();
                     seed = (seed * 9301 + 49297) % 233280;
                     return seed / 233280;
                 };
@@ -172,6 +171,40 @@
                         const workerIdx = remainingForAfternoon[i];
                         const pos = afternoonPositions[i];
                         daySchedule.workers[workerIdx] = pos;
+                        workerCycles[workerIdx].assignments[pos]++;
+                        workerCycles[workerIdx].totalDaysWorked++;
+                        workerCycles[workerIdx].lastShift = pos;
+                        workerCycles[workerIdx].consecutiveMornings++;
+                    }
+
+                    // Ensure all positions are filled
+                    const allPositions = [...morningPositions, ...afternoonPositions];
+                    const assignedPositions = new Set();
+                    
+                    for (let w = 0; w < 7; w++) {
+                        if (daySchedule.workers[w] && allPositions.includes(daySchedule.workers[w])) {
+                            assignedPositions.add(daySchedule.workers[w]);
+                        }
+                    }
+                    
+                    // Fill missing positions with available workers (including from reserve)
+                    const missingPositions = allPositions.filter(pos => !assignedPositions.has(pos));
+                    const workersInReserve = availableWorkers.filter(w => !daySchedule.workers[w]);
+                    
+                    for (let i = 0; i < missingPositions.length && i < workersInReserve.length; i++) {
+                        const pos = missingPositions[i];
+                        const workerIdx = workersInReserve[i];
+                        
+                        // Check if it's a morning position and worker worked afternoon yesterday
+                        const isMorning = pos.includes('M');
+                        const workedAfternoonYesterday = workerCycles[workerIdx].lastShift && workerCycles[workerIdx].lastShift.includes('S');
+                        
+                        if (isMorning && workedAfternoonYesterday) {
+                            daySchedule.workers[workerIdx] = pos + '*';
+                        } else {
+                            daySchedule.workers[workerIdx] = pos;
+                        }
+                        
                         workerCycles[workerIdx].assignments[pos]++;
                         workerCycles[workerIdx].totalDaysWorked++;
                         workerCycles[workerIdx].lastShift = pos;
@@ -434,7 +467,7 @@
                     e('strong', null, 'Notes:'),
                     e('ul', { className: 'ml-4 mt-2 space-y-1' },
                         e('li', null, '• ', e('strong', null, 'Système de travail: '), 'Chaque ouvrier travaille 5 jours consécutifs puis prend un repos'),
-                        e('li', null, '• ', e('strong', null, 'Repos: '), 'Alterne entre 1 jour et 2 jours'),
+                        e('li', null, '• ', e('strong', null, 'Repos: '), 'Alterne entre 1 jour et 2 jours (maximum 2 ouvriers en repos par jour)'),
                         e('li', null, '• 🌅 ', e('strong', null, 'Règle spéciale: '), 'Si un ouvrier travaille 5 jours consécutifs dans n\'importe quelle position (Gare, Port ou Neuf) → repos de 2 jours obligatoire'),
                         e('li', null, '• ', e('strong', null, 'Modification: '), 'Cliquez sur "Modifier" puis cliquez sur une case pour changer le statut'),
                         e('li', null, '• 🩺 ', e('strong', null, 'Malade: '), 'Ouvrier malade - le système cherche automatiquement un remplaçant'),
