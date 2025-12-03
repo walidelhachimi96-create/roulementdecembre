@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau Roulement - Décembre 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body { background: white; }
+            button { display: none !important; }
+            .sticky { position: static !important; }
+            table { font-size: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/javascript">
+        const { useState } = React;
+        const e = React.createElement;
+
+        // Lucide icons as inline SVG
+        const Icons = {
+            Download: () => e('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+                e('path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }),
+                e('polyline', { points: '7 10 12 15 17 10' }),
+                e('line', { x1: 12, y1: 15, x2: 12, y2: 3 })
+            ),
+            FileSpreadsheet: () => e('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+                e('path', { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' }),
+                e('polyline', { points: '14 2 14 8 20 8' }),
+                e('line', { x1: 16, y1: 13, x2: 8, y2: 13 }),
+                e('line', { x1: 16, y1: 17, x2: 8, y2: 17 }),
+                e('line', { x1: 10, y1: 9, x2: 8, y2: 9 })
+            ),
+            Edit2: () => e('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+                e('path', { d: 'M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z' })
+            ),
+            Save: () => e('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+                e('path', { d: 'M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z' }),
+                e('polyline', { points: '17 21 17 13 7 13 7 21' }),
+                e('polyline', { points: '7 3 7 8 15 8' })
+            ),
+            X: () => e('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+                e('line', { x1: 18, y1: 6, x2: 6, y2: 18 }),
+                e('line', { x1: 6, y1: 6, x2: 18, y2: 18 })
+            ),
+            AlertCircle: () => e('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2 },
+                e('circle', { cx: 12, cy: 12, r: 10 }),
+                e('line', { x1: 12, y1: 8, x2: 12, y2: 12 }),
+                e('line', { x1: 12, y1: 16, x2: 12.01, y2: 16 })
+            )
+        };
+
+        function RoulementDecembre() {
+            const workers = ['Ouvrier 1', 'Ouvrier 2', 'Ouvrier 3', 'Ouvrier 4', 'Ouvrier 5', 'Ouvrier 6', 'Ouvrier 7'];
+
+            const generateSchedule = () => {
+                const schedule = [];
+                const daysInMonth = 31;
+
+                const workerCycles = workers.map((_, idx) => ({
+                    workDays: 0,
+                    restDays: 0,
+                    isResting: false,
+                    restType: idx % 2 === 0 ? 1 : 2,
+                    totalDaysWorked: 0,
+                    totalRestDays: 0,
+                    consecutiveMornings: 0,
+                    assignments: { 'Gare-M': 0, 'Port-M': 0, 'Neuf-S': 0, 'Gare-S': 0, 'Port-S': 0 },
+                    lastShift: null
+                }));
+
+                workerCycles[0].workDays = 0;
+                workerCycles[1].workDays = 1;
+                workerCycles[2].workDays = 2;
+                workerCycles[3].workDays = 3;
+                workerCycles[4].workDays = 4;
+                workerCycles[5].isResting = true; workerCycles[5].restDays = 0;
+                workerCycles[6].isResting = true; workerCycles[6].restDays = 0;
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const daySchedule = {
+                        date: day,
+                        workers: Array(7).fill(null)
+                    };
+
+                    const availableWorkers = [];
+                    const restingWorkers = [];
+
+                    for (let w = 0; w < 7; w++) {
+                        if (workerCycles[w].isResting) {
+                            workerCycles[w].restDays++;
+                            workerCycles[w].totalRestDays++;
+                            restingWorkers.push(w);
+                            daySchedule.workers[w] = `Repos (${workerCycles[w].restType}j)`;
+
+                            if (workerCycles[w].restDays >= workerCycles[w].restType) {
+                                workerCycles[w].isResting = false;
+                                workerCycles[w].restDays = 0;
+                                workerCycles[w].workDays = 0;
+                                workerCycles[w].consecutiveMornings = 0;
+                                workerCycles[w].restType = workerCycles[w].restType === 1 ? 2 : 1;
+                            }
+                        } else {
+                            workerCycles[w].workDays++;
+                            availableWorkers.push(w);
+
+                            if (workerCycles[w].consecutiveMornings >= 5) {
+                                workerCycles[w].isResting = true;
+                                workerCycles[w].restDays = 0;
+                                workerCycles[w].workDays = 0;
+                                workerCycles[w].restType = 2;
+                                workerCycles[w].consecutiveMornings = 0;
+                            } else if (workerCycles[w].workDays >= 5) {
+                                workerCycles[w].isResting = true;
+                                workerCycles[w].restDays = 0;
+                                workerCycles[w].workDays = 0;
+                                workerCycles[w].consecutiveMornings = 0;
+                            }
+                        }
+                    }
+
+                    const canWorkMorning = [];
+                    const cannotWorkMorning = [];
+
+                    for (let w of availableWorkers) {
+                        const isAfternoonYesterday = workerCycles[w].lastShift && workerCycles[w].lastShift.includes('S');
+                        if (isAfternoonYesterday) {
+                            cannotWorkMorning.push(w);
+                        } else {
+                            canWorkMorning.push(w);
+                        }
+                    }
+
+                    const shuffledMorningWorkers = [...canWorkMorning].sort(() => Math.random() - 0.5);
+                    const shuffledAfternoonWorkers = [...cannotWorkMorning].sort(() => Math.random() - 0.5);
+
+                    const morningPositions = ['Gare-M', 'Port-M'];
+                    const afternoonPositions = ['Neuf-S', 'Gare-S', 'Port-S'];
+
+                    let morningIdx = 0;
+                    for (let i = 0; i < morningPositions.length && morningIdx < shuffledMorningWorkers.length; i++) {
+                        const workerIdx = shuffledMorningWorkers[morningIdx];
+                        const pos = morningPositions[i];
+                        daySchedule.workers[workerIdx] = pos;
+                        workerCycles[workerIdx].assignments[pos]++;
+                        workerCycles[workerIdx].totalDaysWorked++;
+                        workerCycles[workerIdx].lastShift = pos;
+                        workerCycles[workerIdx].consecutiveMornings++;
+                        morningIdx++;
+                    }
+
+                    const remainingForAfternoon = [
+                        ...shuffledMorningWorkers.slice(morningIdx),
+                        ...shuffledAfternoonWorkers
+                    ].sort(() => Math.random() - 0.5);
+
+                    for (let i = 0; i < afternoonPositions.length && i < remainingForAfternoon.length; i++) {
+                        const workerIdx = remainingForAfternoon[i];
+                        const pos = afternoonPositions[i];
+                        daySchedule.workers[workerIdx] = pos;
+                        workerCycles[workerIdx].assignments[pos]++;
+                        workerCycles[workerIdx].totalDaysWorked++;
+                        workerCycles[workerIdx].lastShift = pos;
+                        workerCycles[workerIdx].consecutiveMornings++;
+                    }
+
+                    const remainingWorkers = availableWorkers.filter(w => !daySchedule.workers[w]);
+
+                    for (let w of remainingWorkers) {
+                        daySchedule.workers[w] = 'Réserve';
+                        workerCycles[w].totalDaysWorked++;
+                        workerCycles[w].lastShift = 'Réserve';
+                        workerCycles[w].consecutiveMornings = 0;
+                    }
+
+                    schedule.push(daySchedule);
+                }
+
+                return { schedule, workerCycles };
+            };
+
+            const [{ schedule: initialSchedule }] = useState(generateSchedule);
+            const [schedule, setSchedule] = useState(initialSchedule);
+            const [editMode, setEditMode] = useState(false);
+            const [selectedCell, setSelectedCell] = useState(null);
+            const [showOptions, setShowOptions] = useState(false);
+
+            const getDayName = (day) => {
+                const date = new Date(2025, 11, day);
+                const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+                return days[date.getDay()];
+            };
+
+            const options = [
+                'Gare-M', 'Port-M', 'Neuf-S', 'Gare-S', 'Port-S',
+                'Réserve', 'Repos (1j)', 'Repos (2j)', 'Malade', 'Absent'
+            ];
+
+            const handleCellClick = (dayIdx, workerIdx) => {
+                if (editMode) {
+                    setSelectedCell({ dayIdx, workerIdx });
+                    setShowOptions(true);
+                }
+            };
+
+            const handleOptionSelect = (option) => {
+                if (selectedCell) {
+                    const newSchedule = [...schedule];
+                    const { dayIdx, workerIdx } = selectedCell;
+                    const oldAssignment = newSchedule[dayIdx].workers[workerIdx];
+
+                    if (option === 'Malade') {
+                        const dayWorkers = newSchedule[dayIdx].workers;
+                        let replacementIdx = -1;
+
+                        for (let i = 0; i < dayWorkers.length; i++) {
+                            if (dayWorkers[i] === 'Réserve') {
+                                replacementIdx = i;
+                                break;
+                            }
+                        }
+
+                        if (replacementIdx === -1) {
+                            for (let i = 0; i < dayWorkers.length; i++) {
+                                if (dayWorkers[i]?.includes('Repos')) {
+                                    replacementIdx = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (replacementIdx !== -1 && oldAssignment && !oldAssignment.includes('Repos')) {
+                            newSchedule[dayIdx].workers[replacementIdx] = oldAssignment + '↔️';
+                            newSchedule[dayIdx].workers[workerIdx] = 'Malade';
+                        } else {
+                            newSchedule[dayIdx].workers[workerIdx] = 'Malade ⚠️';
+                        }
+                    } else {
+                        newSchedule[dayIdx].workers[workerIdx] = option;
+                    }
+
+                    setSchedule(newSchedule);
+                    setShowOptions(false);
+                    setSelectedCell(null);
+                }
+            };
+
+            const resetSchedule = () => {
+                const { schedule: newSchedule } = generateSchedule();
+                setSchedule(newSchedule);
+                setEditMode(false);
+            };
+
+            const printSchedule = () => {
+                window.print();
+            };
+
+            const downloadExcel = () => {
+                let csv = 'Ouvrier';
+                for (let day = 1; day <= 31; day++) {
+                    csv += `,${day} ${getDayName(day)}`;
+                }
+                csv += ',Repos Total\n';
+
+                workers.forEach((worker, idx) => {
+                    csv += worker;
+                    schedule.forEach(day => {
+                        const assignment = day.workers[idx] || '-';
+                        csv += `,${assignment}`;
+                    });
+                    const totalRestDays = schedule.filter(day => day.workers[idx]?.includes('Repos')).length;
+                    csv += `,${totalRestDays}\n`;
+                });
+
+                csv += '\n\nNotes:\n';
+                csv += '• Système de travail: 5 jours consécutifs puis repos\n';
+                csv += '• Ouvrier travaillé soir → ne travaille pas matin le jour suivant\n';
+
+                const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'Roulement_Decembre_2025.csv';
+                link.click();
+            };
+
+            return e('div', { className: 'p-4 bg-gray-50 min-h-screen' },
+                e('div', { className: 'bg-white rounded-lg shadow-lg p-4 mb-4' },
+                    e('div', { className: 'flex justify-between items-center mb-4' },
+                        e('h1', { className: 'text-2xl font-bold text-gray-800' }, 'Tableau Roulement - Décembre 2025'),
+                        e('div', { className: 'flex gap-2' },
+                            e('button', {
+                                onClick: () => setEditMode(!editMode),
+                                className: `flex items-center gap-2 px-4 py-2 rounded transition ${editMode ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-yellow-600 text-white hover:bg-yellow-700'}`
+                            },
+                                editMode ? e(Icons.X) : e(Icons.Edit2),
+                                editMode ? 'Annuler' : 'Modifier'
+                            ),
+                            e('button', {
+                                onClick: resetSchedule,
+                                className: 'flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition'
+                            },
+                                e(Icons.AlertCircle),
+                                'Réinitialiser'
+                            ),
+                            e('button', {
+                                onClick: downloadExcel,
+                                className: 'flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition'
+                            },
+                                e(Icons.FileSpreadsheet),
+                                'Excel'
+                            ),
+                            e('button', {
+                                onClick: printSchedule,
+                                className: 'flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition'
+                            },
+                                e(Icons.Download),
+                                'Imprimer'
+                            )
+                        )
+                    ),
+                    editMode && e('div', { className: 'bg-yellow-50 border-l-4 border-yellow-500 p-3 mb-4' },
+                        e('p', { className: 'text-sm text-yellow-800 font-semibold' }, '🔧 Mode édition activé: Cliquez sur une case pour modifier')
+                    ),
+                    e('div', { className: 'grid grid-cols-4 gap-3 text-xs mb-4' },
+                        e('div', { className: 'bg-blue-50 p-2 rounded' }, e('strong', null, 'Nombre d\'ouvriers: '), '7'),
+                        e('div', { className: 'bg-green-50 p-2 rounded' }, e('strong', null, 'Gare: '), 'Matin + Soir'),
+                        e('div', { className: 'bg-yellow-50 p-2 rounded' }, e('strong', null, 'Neuf: '), 'Soir uniquement'),
+                        e('div', { className: 'bg-purple-50 p-2 rounded' }, e('strong', null, 'Port: '), 'Matin + Soir')
+                    ),
+                    e('div', { className: 'text-xs text-gray-600 flex gap-3 flex-wrap' },
+                        e('span', null, e('strong', null, 'M: '), 'Matin'),
+                        e('span', null, e('strong', null, 'S: '), 'Soir'),
+                        e('span', { className: 'text-red-600' }, e('strong', null, 'Repos: '), 'Repos'),
+                        e('span', { className: 'text-pink-600' }, e('strong', null, 'Malade: '), 'Maladie'),
+                        e('span', { className: 'text-cyan-600' }, e('strong', null, '↔️: '), 'Remplaçant'),
+                        e('span', { className: 'text-orange-600' }, e('strong', null, 'Réserve: '), 'Réserve'),
+                        e('span', { className: 'text-yellow-600' }, e('strong', null, '*: '), 'Urgence'),
+                        e('span', { className: 'text-gray-600' }, e('strong', null, '⚠️: '), 'Pas de remplaçant')
+                    )
+                ),
+                showOptions && e('div', {
+                    className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50',
+                    onClick: () => setShowOptions(false)
+                },
+                    e('div', {
+                        className: 'bg-white rounded-lg p-6 max-w-md w-full mx-4',
+                        onClick: (ev) => ev.stopPropagation()
+                    },
+                        e('h3', { className: 'text-lg font-bold mb-4' }, 'Choisir le statut:'),
+                        e('div', { className: 'grid grid-cols-2 gap-2' },
+                            ...options.map((option, idx) =>
+                                e('button', {
+                                    key: idx,
+                                    onClick: () => handleOptionSelect(option),
+                                    className: 'p-3 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 text-sm font-semibold transition'
+                                }, option)
+                            )
+                        ),
+                        e('button', {
+                            onClick: () => setShowOptions(false),
+                            className: 'mt-4 w-full bg-gray-200 hover:bg-gray-300 p-2 rounded font-semibold'
+                        }, 'Annuler')
+                    )
+                ),
+                e('div', { className: 'bg-white rounded-lg shadow-lg overflow-x-auto' },
+                    e('table', { className: 'w-full text-xs border-collapse' },
+                        e('thead', null,
+                            e('tr', { className: 'bg-gray-800 text-white' },
+                                e('th', { className: 'border border-gray-600 p-2 sticky left-0 bg-gray-800 z-10' }, 'Ouvrier'),
+                                ...schedule.map((day) =>
+                                    e('th', { key: day.date, className: 'border border-gray-600 p-2 min-w-20' },
+                                        e('div', { className: 'font-bold' }, day.date),
+                                        e('div', { className: 'text-xs font-normal' }, getDayName(day.date))
+                                    )
+                                ),
+                                e('th', { className: 'border border-gray-600 p-2 bg-gray-800 sticky right-0 z-10' }, 'Repos')
+                            )
+                        ),
+                        e('tbody', null,
+                            ...workers.map((worker, idx) => {
+                                const totalRestDays = schedule.filter(day => day.workers[idx]?.includes('Repos')).length;
+                                return e('tr', { key: idx, className: 'hover:bg-gray-50' },
+                                    e('td', { className: 'border border-gray-300 p-2 font-bold bg-gray-100 sticky left-0 z-10' }, worker),
+                                    ...schedule.map((day, dayIdx) => {
+                                        const assignment = day.workers[idx];
+                                        const isRest = assignment?.includes('Repos');
+                                        const isSick = assignment?.includes('Malade');
+                                        const isAbsent = assignment === 'Absent';
+                                        const isReserve = assignment === 'Réserve';
+                                        const isReplacement = assignment?.includes('↔️');
+                                        const isEmergency = assignment?.includes('*');
+                                        const isGare = assignment?.includes('Gare');
+                                        const isNeuf = assignment?.includes('Neuf');
+                                        const isPort = assignment?.includes('Port');
+
+                                        return e('td', {
+                                            key: day.date,
+                                            onClick: () => handleCellClick(dayIdx, idx),
+                                            className: `border border-gray-300 p-1 text-center font-semibold text-xs transition ${editMode ? 'cursor-pointer hover:ring-2 hover:ring-blue-400' : ''} ${
+                                                isRest ? 'bg-red-100 text-red-700' :
+                                                isSick ? 'bg-pink-100 text-pink-700' :
+                                                isAbsent ? 'bg-gray-300 text-gray-700' :
+                                                isReplacement ? 'bg-cyan-100 text-cyan-800' :
+                                                isReserve ? 'bg-orange-100 text-orange-700' :
+                                                isEmergency ? 'bg-yellow-100 text-yellow-800' :
+                                                isGare ? 'bg-blue-100 text-blue-800' :
+                                                isNeuf ? 'bg-green-100 text-green-800' :
+                                                isPort ? 'bg-purple-100 text-purple-800' :
+                                                'bg-gray-50'
+                                            }`
+                                        }, assignment || '-');
+                                    }),
+                                    e('td', { className: 'border border-gray-300 p-2 font-bold bg-blue-50 text-blue-900 text-center sticky right-0 z-10' }, `${totalRestDays} j`)
+                                );
+                            })
+                        )
+                    )
+                ),
+                e('div', { className: 'mt-4 bg-white rounded-lg shadow p-3 text-xs text-gray-600' },
+                    e('strong', null, 'Notes:'),
+                    e('ul', { className: 'ml-4 mt-2 space-y-1' },
+                        e('li', null, '• ', e('strong', null, 'Système de travail: '), 'Chaque ouvrier travaille 5 jours consécutifs puis prend un repos'),
+                        e('li', null, '• ', e('strong', null, 'Repos: '), 'Alterne entre 1 jour et 2 jours'),
+                        e('li', null, '• 🌅 ', e('strong', null, 'Règle spéciale: '), 'Si un ouvrier travaille 5 jours consécutifs dans n\'importe quelle position (Gare, Port ou Neuf) → repos de 2 jours obligatoire'),
+                        e('li', null, '• ', e('strong', null, 'Modification: '), 'Cliquez sur "Modifier" puis cliquez sur une case pour changer le statut'),
+                        e('li', null, '• 🩺 ', e('strong', null, 'Malade: '), 'Ouvrier malade - le système cherche automatiquement un remplaçant'),
+                        e('li', null, '• ↔️ ', e('strong', null, 'Remplaçant: '), 'Ouvrier qui remplace le malade (depuis Réserve ou Repos)'),
+                        e('li', null, '• ⚠️ ', e('strong', null, 'Pas de remplaçant: '), 'Aucun remplaçant disponible'),
+                        e('li', null, '• ❌ ', e('strong', null, 'Absent: '), 'Ouvrier absent'),
+                        e('li', null, '• ⚠️ Ouvrier travaillé soir (S) → ', e('strong', null, 'ne peut pas'), ' travailler matin (M) le jour suivant'),
+                        e('li', null, '• ✅ Ouvrier travaillé matin (M) → ', e('strong', null, 'peut'), ' travailler soir (S) le même jour ou le jour suivant')
+                    )
+                )
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(e(RoulementDecembre));
+    </script>
+</body>
+</html>
