@@ -57,38 +57,66 @@
         };
 
         function RoulementDecembre() {
-            const workers = ['najdi', 'sehaba', 'walid', 'othmane', 'essaid', 'toumart', 'achab'];
+            const workers = ['Achab', 'Essaid', 'Sehaba', 'Najdi', 'EL hachimi', 'birik', 'Toumart'];
 
-            const generateSchedule = (useSeed = true) => {
+            const generateSchedule = (keepRestDays = false, existingSchedule = null) => {
                 const schedule = [];
                 const daysInMonth = 31;
                 
-                // Use seed based on timestamp for truly random reset
-                let seed = useSeed ? 12345 : Date.now();
-                const seededRandom = () => {
-                    seed = (seed * 9301 + 49297) % 233280;
-                    return seed / 233280;
-                };
+                // Always use random for services distribution
+                const seededRandom = () => Math.random();
 
-                const workerCycles = workers.map((_, idx) => ({
-                    workDays: 0,
-                    restDays: 0,
-                    isResting: false,
-                    restType: idx % 2 === 0 ? 1 : 2,
-                    totalDaysWorked: 0,
-                    totalRestDays: 0,
-                    consecutiveMornings: 0,
-                    assignments: { 'Gare-M': 0, 'Port-M': 0, 'Neuf-S': 0, 'Gare-S': 0, 'Port-S': 0 },
-                    lastShift: null
-                }));
-
-                workerCycles[0].workDays = 0;
-                workerCycles[1].workDays = 1;
-                workerCycles[2].workDays = 2;
-                workerCycles[3].workDays = 3;
-                workerCycles[4].workDays = 4;
-                workerCycles[5].isResting = true; workerCycles[5].restDays = 0;
-                workerCycles[6].isResting = true; workerCycles[6].restDays = 0;
+                // If keepRestDays, reuse existing rest pattern
+                const workerCycles = workers.map((_, idx) => {
+                    let isResting = false;
+                    let restDays = 0;
+                    let workDays = 0;
+                    
+                    if (keepRestDays && existingSchedule) {
+                        // Check first day to see if worker is resting
+                        const firstDayStatus = existingSchedule[0].workers[idx];
+                        if (firstDayStatus?.includes('Repos')) {
+                            isResting = true;
+                            // Count consecutive rest days from start
+                            for (let d = 0; d < existingSchedule.length; d++) {
+                                if (existingSchedule[d].workers[idx]?.includes('Repos')) {
+                                    restDays = d + 1;
+                                } else {
+                                    break;
+                                }
+                            }
+                        } else {
+                            // Count work days from start
+                            for (let d = 0; d < existingSchedule.length; d++) {
+                                const status = existingSchedule[d].workers[idx];
+                                if (!status?.includes('Repos') && status !== 'Malade' && status !== 'Absent') {
+                                    workDays = d + 1;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        // Initial setup for new schedule
+                        if (idx === 5 || idx === 6) {
+                            isResting = true;
+                        } else {
+                            workDays = idx;
+                        }
+                    }
+                    
+                    return {
+                        workDays: workDays,
+                        restDays: restDays,
+                        isResting: isResting,
+                        restType: idx % 2 === 0 ? 1 : 2,
+                        totalDaysWorked: 0,
+                        totalRestDays: 0,
+                        consecutiveMornings: 0,
+                        assignments: { 'Gare-M': 0, 'Port-M': 0, 'Neuf-S': 0, 'Gare-S': 0, 'Port-S': 0 },
+                        lastShift: null
+                    };
+                });
 
                 for (let day = 1; day <= daysInMonth; day++) {
                     const daySchedule = {
@@ -226,7 +254,7 @@
                 return { schedule, workerCycles };
             };
 
-            const [{ schedule: initialSchedule }] = useState(generateSchedule);
+            const [{ schedule: initialSchedule }] = useState(() => generateSchedule(false, null));
             const [schedule, setSchedule] = useState(initialSchedule);
             const [editMode, setEditMode] = useState(false);
             const [selectedCell, setSelectedCell] = useState(null);
@@ -293,7 +321,8 @@
             };
 
             const resetSchedule = () => {
-                const { schedule: newSchedule } = generateSchedule(false); // Use true random
+                // Keep rest days fixed, only randomize services
+                const { schedule: newSchedule } = generateSchedule(true, schedule);
                 setSchedule(newSchedule);
                 setEditMode(false);
             };
@@ -347,7 +376,7 @@
                                 className: 'flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition'
                             },
                                 e(Icons.AlertCircle),
-                                'Réinitialiser'
+                                'Mélanger Services'
                             ),
                             e('button', {
                                 onClick: downloadExcel,
@@ -468,6 +497,7 @@
                     e('ul', { className: 'ml-4 mt-2 space-y-1' },
                         e('li', null, '• ', e('strong', null, 'Système de travail: '), 'Chaque ouvrier travaille 5 jours consécutifs puis prend un repos'),
                         e('li', null, '• ', e('strong', null, 'Repos: '), 'Alterne entre 1 jour et 2 jours (maximum 2 ouvriers en repos par jour)'),
+                        e('li', null, '• 🔄 ', e('strong', null, 'Mélanger Services: '), 'Garde les jours de repos fixes mais change les services (Gare/Port/Neuf) de façon aléatoire'),
                         e('li', null, '• 🌅 ', e('strong', null, 'Règle spéciale: '), 'Si un ouvrier travaille 5 jours consécutifs dans n\'importe quelle position (Gare, Port ou Neuf) → repos de 2 jours obligatoire'),
                         e('li', null, '• ', e('strong', null, 'Modification: '), 'Cliquez sur "Modifier" puis cliquez sur une case pour changer le statut'),
                         e('li', null, '• 🩺 ', e('strong', null, 'Malade: '), 'Ouvrier malade - le système cherche automatiquement un remplaçant'),
