@@ -57,11 +57,19 @@
         };
 
         function RoulementDecembre() {
-            const workers = ['sahaba', 'essaid', 'najdi', 'walid ', 'othmane', 'achab', 'toumart'];
+            const workers = ['Ouvrier 1', 'Ouvrier 2', 'Ouvrier 3', 'Ouvrier 4', 'Ouvrier 5', 'Ouvrier 6', 'Ouvrier 7'];
 
-            const generateSchedule = () => {
+            const generateSchedule = (useSeed = true) => {
                 const schedule = [];
                 const daysInMonth = 31;
+                
+                // Use a fixed seed for consistent randomization
+                let seed = 12345;
+                const seededRandom = () => {
+                    if (!useSeed) return Math.random();
+                    seed = (seed * 9301 + 49297) % 233280;
+                    return seed / 233280;
+                };
 
                 const workerCycles = workers.map((_, idx) => ({
                     workDays: 0,
@@ -137,8 +145,8 @@
                         }
                     }
 
-                    const shuffledMorningWorkers = [...canWorkMorning].sort(() => Math.random() - 0.5);
-                    const shuffledAfternoonWorkers = [...cannotWorkMorning].sort(() => Math.random() - 0.5);
+                    const shuffledMorningWorkers = [...canWorkMorning].sort(() => seededRandom() - 0.5);
+                    const shuffledAfternoonWorkers = [...cannotWorkMorning].sort(() => seededRandom() - 0.5);
 
                     const morningPositions = ['Gare-M', 'Port-M'];
                     const afternoonPositions = ['Neuf-S', 'Gare-S', 'Port-S'];
@@ -158,7 +166,7 @@
                     const remainingForAfternoon = [
                         ...shuffledMorningWorkers.slice(morningIdx),
                         ...shuffledAfternoonWorkers
-                    ].sort(() => Math.random() - 0.5);
+                    ].sort(() => seededRandom() - 0.5);
 
                     for (let i = 0; i < afternoonPositions.length && i < remainingForAfternoon.length; i++) {
                         const workerIdx = remainingForAfternoon[i];
@@ -252,7 +260,7 @@
             };
 
             const resetSchedule = () => {
-                const { schedule: newSchedule } = generateSchedule();
+                const { schedule: newSchedule } = generateSchedule(false); // Use true random
                 setSchedule(newSchedule);
                 setEditMode(false);
             };
