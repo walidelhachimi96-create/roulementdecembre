@@ -13,17 +13,63 @@
         
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><linearGradient id="grad1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"><stop offset="0%25" style="stop-color:%23c31432;stop-opacity:0.3" /><stop offset="100%25" style="stop-color:%23240b36;stop-opacity:0.3" /></linearGradient></defs><rect width="1200" height="600" fill="url(%23grad1)"/><path d="M100,300 Q200,200 300,300 T500,300" stroke="%23ffffff" stroke-width="3" fill="none" opacity="0.3"/><circle cx="100" cy="300" r="20" fill="%23c31432" opacity="0.5"/><circle cx="500" cy="300" r="20" fill="%23c31432" opacity="0.5"/><rect x="50" y="280" width="100" height="40" rx="5" fill="%23c31432" opacity="0.4"/><rect x="60" y="285" width="15" height="30" fill="%23ffffff" opacity="0.6"/><rect x="85" y="285" width="15" height="30" fill="%23ffffff" opacity="0.6"/><rect x="110" y="285" width="15" height="30" fill="%23ffffff" opacity="0.6"/><rect x="135" y="285" width="10" height="30" fill="%23ffffff" opacity="0.6"/></svg>');
+            background-size: cover;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
         }
         
         .container {
             background: white;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             max-width: 100%;
             overflow-x: auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .train-header {
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(195, 20, 50, 0.3);
+        }
+        
+        .train-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .train-icon svg {
+            width: 60px;
+            height: 60px;
         }
         
         .header {
@@ -120,9 +166,20 @@
         }
         
         th {
-            background: #1f2937;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
             color: white;
             font-weight: bold;
+            position: relative;
+        }
+        
+        th::after {
+            content: '🚄';
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.3;
+            font-size: 14px;
         }
         
         .worker-name {
@@ -183,11 +240,23 @@
         
         .notes {
             margin-top: 20px;
-            padding: 15px;
-            background: #f9fafb;
-            border-radius: 5px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            border-left: 5px solid #c31432;
             font-size: 12px;
             line-height: 1.8;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .moroccan-pattern {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 60px;
+            opacity: 0.1;
+            pointer-events: none;
         }
         
         .notes strong {
@@ -216,6 +285,44 @@
 </head>
 <body>
     <div class="container">
+        <div class="train-header">
+            <div class="train-icon">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="trainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#c31432;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#240b36;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Train body -->
+                    <rect x="40" y="60" width="120" height="70" rx="15" fill="url(#trainGrad)"/>
+                    <!-- Windows -->
+                    <rect x="50" y="70" width="25" height="25" rx="3" fill="#ffffff" opacity="0.9"/>
+                    <rect x="85" y="70" width="25" height="25" rx="3" fill="#ffffff" opacity="0.9"/>
+                    <rect x="120" y="70" width="25" height="25" rx="3" fill="#ffffff" opacity="0.9"/>
+                    <!-- Door -->
+                    <rect x="85" y="100" width="25" height="30" rx="3" fill="#240b36"/>
+                    <!-- Wheels -->
+                    <circle cx="65" cy="135" r="12" fill="#333333"/>
+                    <circle cx="65" cy="135" r="6" fill="#666666"/>
+                    <circle cx="135" cy="135" r="12" fill="#333333"/>
+                    <circle cx="135" cy="135" r="6" fill="#666666"/>
+                    <!-- Roof details -->
+                    <rect x="45" y="50" width="110" height="10" rx="5" fill="#c31432"/>
+                    <!-- Front light -->
+                    <circle cx="155" cy="85" r="5" fill="#ffd700"/>
+                    <!-- Speed lines -->
+                    <line x1="20" y1="75" x2="35" y2="75" stroke="#c31432" stroke-width="2" opacity="0.6"/>
+                    <line x1="15" y1="95" x2="35" y2="95" stroke="#c31432" stroke-width="2" opacity="0.6"/>
+                    <line x1="20" y1="115" x2="35" y2="115" stroke="#c31432" stroke-width="2" opacity="0.6"/>
+                </svg>
+            </div>
+            <div style="flex: 1;">
+                <h1 style="margin: 0; font-size: 28px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🇲🇦 ONCF - Tableau de Roulement</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Office National des Chemins de Fer du Maroc</p>
+            </div>
+        </div>
+        
         <div class="header">
             <div>
                 <h1>Tableau de Roulement - <span id="monthName">Décembre</span> <span id="yearName">2025</span></h1>
@@ -353,135 +460,119 @@
                 const positions = ['Gare-Matin', 'Port-Matin', 'Neuf-Soir', 'Gare-Soir', 'Port-Soir'];
                 
                 // Separate workers: those who were reserve yesterday CANNOT be reserve today
-                const cannotBeReserveToday = available.filter(w => workerStates[w].wasReserveYesterday);
+                const mustWorkToday = available.filter(w => workerStates[w].wasReserveYesterday);
                 const canBeReserveToday = available.filter(w => !workerStates[w].wasReserveYesterday);
                 
-                // Priority 1: Workers who CANNOT be reserve (must get positions)
-                const priorityWorkers = [...cannotBeReserveToday].sort(() => Math.random() - 0.5);
-                // Priority 2: Other workers
-                const normalWorkers = [...canBeReserveToday].sort(() => Math.random() - 0.5);
+                // Shuffle for randomness
+                const shuffledMustWork = [...mustWorkToday].sort(() => Math.random() - 0.5);
+                const shuffledCanReserve = [...canBeReserveToday].sort(() => Math.random() - 0.5);
                 
-                const allShuffled = [...priorityWorkers, ...normalWorkers];
+                // Combine: priority to those who must work
+                let allWorkersOrdered = [...shuffledMustWork, ...shuffledCanReserve];
                 
-                let posIdx = 0;
+                // Assign all 5 positions first
+                const assigned = new Set();
                 
-                // Assign positions
-                for (let w of allShuffled) {
-                    if (posIdx >= 5) break;
+                for (let i = 0; i < positions.length; i++) {
+                    const pos = positions[i];
+                    let workerAssigned = false;
                     
-                    const pos = positions[posIdx];
-                    
-                    // Check morning restriction
-                    if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
-                        continue;
+                    // Try to find a suitable worker for this position
+                    for (let w of allWorkersOrdered) {
+                        if (assigned.has(w)) continue;
+                        
+                        // Check morning restriction
+                        if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
+                            continue;
+                        }
+                        
+                        // Assign this worker to this position
+                        daySchedule.workers[w] = pos;
+                        workerStates[w].lastShift = pos;
+                        workerStates[w].wasReserveYesterday = false;
+                        assigned.add(w);
+                        workerAssigned = true;
+                        
+                        if (pos.includes('Matin')) {
+                            workerStates[w].consecutiveMorning++;
+                        } else {
+                            workerStates[w].consecutiveMorning = 0;
+                        }
+                        
+                        break;
                     }
                     
-                    daySchedule.workers[w] = pos;
-                    workerStates[w].lastShift = pos;
-                    workerStates[w].wasReserveYesterday = false;
-                    
-                    if (pos.includes('Matin')) {
-                        workerStates[w].consecutiveMorning++;
-                    } else {
-                        workerStates[w].consecutiveMorning = 0;
-                    }
-                    
-                    posIdx++;
-                }
-                
-                // Remaining workers
-                for (let w of available) {
-                    if (!daySchedule.workers[w]) {
-                        // If was reserve yesterday, MUST get a position
-                        if (workerStates[w].wasReserveYesterday) {
-                            // Find ANY worker currently assigned and swap if necessary
-                            let foundSwap = false;
+                    // If no worker found (morning restriction), try with emergency marker
+                    if (!workerAssigned) {
+                        for (let w of allWorkersOrdered) {
+                            if (assigned.has(w)) continue;
                             
-                            // Try all positions
-                            for (let i = 0; i < positions.length; i++) {
-                                const pos = positions[i];
-                                
-                                // Check morning restriction
-                                if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
-                                    continue;
-                                }
-                                
-                                // Find who has this position
-                                let currentWorker = -1;
-                                for (let checkW = 0; checkW < numWorkers; checkW++) {
-                                    if (daySchedule.workers[checkW] === pos) {
-                                        currentWorker = checkW;
-                                        break;
-                                    }
-                                }
-                                
-                                // If position is free OR we can swap with someone who wasn't reserve yesterday
-                                if (currentWorker === -1) {
-                                    daySchedule.workers[w] = pos;
-                                    workerStates[w].lastShift = pos;
-                                    workerStates[w].wasReserveYesterday = false;
-                                    foundSwap = true;
-                                    
-                                    if (pos.includes('Matin')) {
-                                        workerStates[w].consecutiveMorning++;
-                                    } else {
-                                        workerStates[w].consecutiveMorning = 0;
-                                    }
-                                    break;
-                                } else if (!workerStates[currentWorker].wasReserveYesterday) {
-                                    // Swap: current worker goes to reserve, this worker takes position
-                                    daySchedule.workers[currentWorker] = 'Réserve';
-                                    workerStates[currentWorker].wasReserveYesterday = true;
-                                    workerStates[currentWorker].consecutiveMorning = 0;
-                                    
-                                    daySchedule.workers[w] = pos;
-                                    workerStates[w].lastShift = pos;
-                                    workerStates[w].wasReserveYesterday = false;
-                                    foundSwap = true;
-                                    
-                                    if (pos.includes('Matin')) {
-                                        workerStates[w].consecutiveMorning++;
-                                    } else {
-                                        workerStates[w].consecutiveMorning = 0;
-                                    }
-                                    break;
-                                }
+                            // Force assign with emergency marker
+                            if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
+                                daySchedule.workers[w] = pos + '*';
+                            } else {
+                                daySchedule.workers[w] = pos;
                             }
                             
-                            // If still no position found (very rare), assign with marker
-                            if (!foundSwap) {
-                                // Last resort: take any position even if it breaks morning rule
-                                for (let i = 0; i < positions.length; i++) {
-                                    const pos = positions[i];
-                                    let positionFree = true;
-                                    
-                                    for (let checkW = 0; checkW < numWorkers; checkW++) {
-                                        if (daySchedule.workers[checkW] === pos) {
-                                            positionFree = false;
-                                            break;
+                            workerStates[w].lastShift = pos;
+                            workerStates[w].wasReserveYesterday = false;
+                            assigned.add(w);
+                            
+                            if (pos.includes('Matin')) {
+                                workerStates[w].consecutiveMorning++;
+                            } else {
+                                workerStates[w].consecutiveMorning = 0;
+                            }
+                            
+                            break;
+                        }
+                    }
+                }
+                
+                // Remaining workers go to reserve
+                for (let w of available) {
+                    if (!assigned.has(w)) {
+                        if (workerStates[w].wasReserveYesterday) {
+                            // This should be very rare now
+                            // Try to swap with someone in reserve position
+                            let swapped = false;
+                            for (let otherW of available) {
+                                if (assigned.has(otherW) && !workerStates[otherW].wasReserveYesterday) {
+                                    // Check if we can swap
+                                    const otherPos = daySchedule.workers[otherW];
+                                    if (otherPos && !otherPos.includes('*')) {
+                                        // Check morning rule
+                                        if (otherPos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
+                                            continue;
                                         }
-                                    }
-                                    
-                                    if (positionFree) {
-                                        if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
-                                            daySchedule.workers[w] = pos + '*';
-                                        } else {
-                                            daySchedule.workers[w] = pos;
-                                        }
-                                        workerStates[w].lastShift = pos;
-                                        workerStates[w].wasReserveYesterday = false;
                                         
-                                        if (pos.includes('Matin')) {
+                                        // Swap
+                                        daySchedule.workers[w] = otherPos;
+                                        daySchedule.workers[otherW] = 'Réserve';
+                                        workerStates[w].lastShift = otherPos;
+                                        workerStates[w].wasReserveYesterday = false;
+                                        workerStates[otherW].wasReserveYesterday = true;
+                                        workerStates[otherW].consecutiveMorning = 0;
+                                        
+                                        if (otherPos.includes('Matin')) {
                                             workerStates[w].consecutiveMorning++;
                                         } else {
                                             workerStates[w].consecutiveMorning = 0;
                                         }
+                                        
+                                        swapped = true;
                                         break;
                                     }
                                 }
                             }
+                            
+                            if (!swapped) {
+                                // Very rare case - assign to reserve anyway
+                                daySchedule.workers[w] = 'Réserve';
+                                workerStates[w].consecutiveMorning = 0;
+                                workerStates[w].wasReserveYesterday = true;
+                            }
                         } else {
-                            // Can be reserve today
                             daySchedule.workers[w] = 'Réserve';
                             workerStates[w].consecutiveMorning = 0;
                             workerStates[w].wasReserveYesterday = true;
