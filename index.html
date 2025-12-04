@@ -44,6 +44,32 @@
             z-index: 1;
         }
         
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: visible;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .table-wrapper::-webkit-scrollbar {
+            height: 12px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            border-radius: 10px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #240b36 0%, #c31432 100%);
+        }
+        
         .train-header {
             background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
             padding: 20px;
@@ -138,8 +164,136 @@
             color: white;
         }
         
-        .btn-whatsapp:hover {
-            background: #128C7E;
+        .btn-warning:hover {
+            background: #d97706;
+        }
+        
+        .btn-edit {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #d97706;
+        }
+        
+        .btn-cancel {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background: #dc2626;
+        }
+        
+        .edit-mode-notice {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #92400e;
+        }
+        
+        .editable-cell {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .editable-cell:hover {
+            background: #fef3c7 !important;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #1f2937;
+            text-align: center;
+        }
+        
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .option-btn {
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .option-btn:hover {
+            background: #c31432;
+            color: white;
+            border-color: #c31432;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(195, 20, 50, 0.3);
+        }
+        
+        .modal-close {
+            width: 100%;
+            padding: 12px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: #4b5563;
         }
         
         .worker-counter {
@@ -160,8 +314,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
             font-size: 12px;
+            min-width: 100%;
         }
         
         th, td {
@@ -285,6 +439,9 @@
             .controls {
                 display: none !important;
             }
+            .table-wrapper {
+                overflow: visible !important;
+            }
         }
     </style>
 </head>
@@ -360,11 +517,15 @@
                     <span id="workerCount">8 ouvriers</span>
                     <button class="btn-success" onclick="addWorker()">+</button>
                 </div>
+                <button id="editBtn" class="btn-edit" onclick="toggleEditMode()">✏️ Modifier</button>
                 <button class="btn-warning" onclick="shuffleSchedule()">🔄 Mélanger</button>
-                <button class="btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
                 <button class="btn-success" onclick="downloadExcel()">📥 Excel</button>
                 <button class="btn-primary" onclick="window.print()">🖨️ Imprimer</button>
             </div>
+        </div>
+        
+        <div id="editNotice" class="edit-mode-notice" style="display: none;">
+            🔧 Mode édition activé - Cliquez sur une case pour la modifier
         </div>
         
         <div id="tableContainer"></div>
@@ -375,7 +536,8 @@
             • <strong>Système de travail:</strong> Chaque ouvrier travaille maximum 5 jours consécutifs puis prend repos<br>
             • <strong>Repos:</strong> Alterne entre 1 jour et 2 jours (maximum 2 ouvriers en repos par jour)<br>
             • <strong>Règle spéciale MATIN:</strong> Si un ouvrier travaille matin pendant 5 jours consécutifs → repos de 2 jours OBLIGATOIRE<br>
-            • <strong>📱 WhatsApp:</strong> مشاركة الجدول مباشرة عبر واتساب مع تنسيق جميل<br>
+            • <strong>🔄 Mélanger:</strong> يغير توزيع أيام الراحة والمهام بشكل عشوائي بين جميع العمال<br>
+            • <strong>✏️ Modifier:</strong> Activez le mode édition pour modifier manuellement n'importe quelle case du tableau<br>
             • <strong>Mélanger:</strong> Change tout aléatoirement: repos, services, timing<br>
             • <strong>Ajouter/Supprimer ouvriers:</strong> Minimum 5 ouvriers, Maximum 15 ouvriers<br>
             • <strong>Malade:</strong> Ouvrier malade - le système cherche automatiquement un remplaçant<br>
@@ -386,12 +548,23 @@
             • <strong>Couleurs:</strong> Rouge = Repos, Bleu = Gare, Vert = Neuf, Violet = Port, Orange = Réserve
         </div>
     </div>
+    
+    <!-- Modal for editing -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Choisir le statut</div>
+            <div class="option-grid" id="optionGrid"></div>
+            <button class="modal-close" onclick="closeModal()">Annuler</button>
+        </div>
+    </div>
 
     <script>
         let numWorkers = 8;
         let selectedMonth = 12;
         let selectedYear = 2025;
         let currentSchedule = null; // Store the current schedule
+        let editMode = false;
+        let selectedCell = null;
         
         const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
                            'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -423,15 +596,21 @@
                 return seed / 233280;
             };
             
-            const workerStates = workers.map((_, idx) => ({
-                workDays: 0,
-                restDays: 0,
-                isResting: idx >= 5,
-                restType: idx % 2 === 0 ? 1 : 2,
-                consecutiveMorning: 0,
-                wasReserveYesterday: false,
-                lastShift: null
-            }));
+            // Randomize initial rest states when shuffling
+            const workerStates = workers.map((_, idx) => {
+                const startResting = useSeed ? (idx >= 5) : (seededRandom() > 0.5);
+                const startRestType = useSeed ? (idx % 2 === 0 ? 1 : 2) : (seededRandom() > 0.5 ? 1 : 2);
+                
+                return {
+                    workDays: 0,
+                    restDays: 0,
+                    isResting: startResting,
+                    restType: startRestType,
+                    consecutiveMorning: 0,
+                    wasReserveYesterday: false,
+                    lastShift: null
+                };
+            });
             
             for (let day = 1; day <= daysInMonth; day++) {
                 const daySchedule = { date: day, workers: Array(numWorkers).fill(null) };
@@ -611,7 +790,7 @@
             const schedule = currentSchedule;
             const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
             
-            let html = '<table><thead><tr><th class="worker-name">Ouvrier</th>';
+            let html = '<div class="table-wrapper"><table><thead><tr><th class="worker-name">Ouvrier</th>';
             
             for (let day = 1; day <= daysInMonth; day++) {
                 html += `<th>${day}<br><small>${getDayName(day, selectedMonth, selectedYear)}</small></th>`;
@@ -644,7 +823,7 @@
                 html += `<td class="rest-total">${restCount}j</td></tr>`;
             }
             
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
             document.getElementById('tableContainer').innerHTML = html;
         }
         
@@ -704,69 +883,6 @@
             link.href = URL.createObjectURL(blob);
             link.download = `Roulement_${monthNames[selectedMonth - 1]}_${selectedYear}.csv`;
             link.click();
-        }
-        
-        function shareWhatsApp() {
-            const schedule = currentSchedule || generateSchedule(true);
-            const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
-            
-            // Create formatted message
-            let message = `🚄 *ONCF - Tableau de Roulement*\n`;
-            message += `📅 *${monthNames[selectedMonth - 1]} ${selectedYear}*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-            
-            // Add workers and their schedules
-            for (let w = 0; w < numWorkers; w++) {
-                message += `👤 *Ouvrier ${w + 1}*\n`;
-                
-                let weekSchedule = '';
-                let restDays = 0;
-                
-                for (let day = 0; day < Math.min(daysInMonth, 31); day++) {
-                    const assignment = schedule[day].workers[w] || '-';
-                    const dayNum = day + 1;
-                    const dayName = getDayName(dayNum, selectedMonth, selectedYear);
-                    
-                    // Format assignment
-                    let emoji = '';
-                    if (assignment.includes('Repos')) {
-                        emoji = '😴';
-                        restDays++;
-                    } else if (assignment.includes('Gare')) {
-                        emoji = '🚉';
-                    } else if (assignment.includes('Port')) {
-                        emoji = '⚓';
-                    } else if (assignment.includes('Neuf')) {
-                        emoji = '🆕';
-                    } else if (assignment.includes('Réserve')) {
-                        emoji = '⏸️';
-                    }
-                    
-                    weekSchedule += `${dayNum}/${selectedMonth} (${dayName}): ${emoji} ${assignment}\n`;
-                    
-                    // Add separator every 7 days for readability
-                    if ((day + 1) % 7 === 0 && day < daysInMonth - 1) {
-                        weekSchedule += '- - - - -\n';
-                    }
-                }
-                
-                message += weekSchedule;
-                message += `📊 Total repos: ${restDays} jours\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-            }
-            
-            message += `✅ *Légende:*\n`;
-            message += `🚉 Gare | ⚓ Port | 🆕 Neuf\n`;
-            message += `😴 Repos | ⏸️ Réserve\n`;
-            message += `M=Matin | S=Soir\n\n`;
-            message += `🇲🇦 *ONCF Maroc* - Office National des Chemins de Fer`;
-            
-            // Encode message for URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Open WhatsApp with message
-            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
         }
         
         document.getElementById('monthSelect').addEventListener('change', function() {
