@@ -259,6 +259,22 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .option-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .option-grid::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .option-grid::-webkit-scrollbar-thumb {
+            background: #c31432;
+            border-radius: 10px;
         }
         
         .option-btn {
@@ -365,11 +381,35 @@
         .sick {
             background: #fce7f3;
             color: #9f1239;
+            font-weight: bold;
+        }
+        
+        .absent {
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: bold;
+        }
+        
+        .conge {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: bold;
+        }
+        
+        .formation {
+            background: #e0e7ff;
+            color: #3730a3;
+            font-weight: bold;
         }
         
         .reserve {
             background: #fed7aa;
             color: #9a3412;
+        }
+        
+        .absent {
+            background: #fecaca;
+            color: #7f1d1d;
         }
         
         .gare {
@@ -810,6 +850,9 @@
                         className = 'rest';
                         restCount++;
                     } else if (assignment.includes('Malade')) className = 'sick';
+                    else if (assignment === 'Absent') className = 'absent';
+                    else if (assignment === 'Congé') className = 'conge';
+                    else if (assignment === 'Formation') className = 'formation';
                     else if (assignment.includes('Réserve')) className = 'reserve';
                     else if (assignment.includes('Gare')) className = 'gare';
                     else if (assignment.includes('Neuf')) className = 'neuf';
