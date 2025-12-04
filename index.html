@@ -133,8 +133,13 @@
             color: white;
         }
         
-        .btn-warning:hover {
-            background: #d97706;
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #128C7E;
         }
         
         .worker-counter {
@@ -356,6 +361,7 @@
                     <button class="btn-success" onclick="addWorker()">+</button>
                 </div>
                 <button class="btn-warning" onclick="shuffleSchedule()">🔄 Mélanger</button>
+                <button class="btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
                 <button class="btn-success" onclick="downloadExcel()">📥 Excel</button>
                 <button class="btn-primary" onclick="window.print()">🖨️ Imprimer</button>
             </div>
@@ -369,6 +375,7 @@
             • <strong>Système de travail:</strong> Chaque ouvrier travaille maximum 5 jours consécutifs puis prend repos<br>
             • <strong>Repos:</strong> Alterne entre 1 jour et 2 jours (maximum 2 ouvriers en repos par jour)<br>
             • <strong>Règle spéciale MATIN:</strong> Si un ouvrier travaille matin pendant 5 jours consécutifs → repos de 2 jours OBLIGATOIRE<br>
+            • <strong>📱 WhatsApp:</strong> مشاركة الجدول مباشرة عبر واتساب مع تنسيق جميل<br>
             • <strong>Mélanger:</strong> Change tout aléatoirement: repos, services, timing<br>
             • <strong>Ajouter/Supprimer ouvriers:</strong> Minimum 5 ouvriers, Maximum 15 ouvriers<br>
             • <strong>Malade:</strong> Ouvrier malade - le système cherche automatiquement un remplaçant<br>
@@ -384,6 +391,7 @@
         let numWorkers = 8;
         let selectedMonth = 12;
         let selectedYear = 2025;
+        let currentSchedule = null; // Store the current schedule
         
         const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
                            'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -402,10 +410,18 @@
             return dayNames[date.getDay()];
         }
         
-        function generateSchedule() {
+        function generateSchedule(useSeed = false) {
             const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
             const schedule = [];
             const workers = Array.from({length: numWorkers}, (_, i) => `Ouvrier ${i + 1}`);
+            
+            // Use seed for consistent initial generation
+            let seed = useSeed ? 42 : Date.now();
+            const seededRandom = () => {
+                if (!useSeed) return Math.random();
+                seed = (seed * 9301 + 49297) % 233280;
+                return seed / 233280;
+            };
             
             const workerStates = workers.map((_, idx) => ({
                 workDays: 0,
@@ -463,9 +479,9 @@
                 const mustWorkToday = available.filter(w => workerStates[w].wasReserveYesterday);
                 const canBeReserveToday = available.filter(w => !workerStates[w].wasReserveYesterday);
                 
-                // Shuffle for randomness
-                const shuffledMustWork = [...mustWorkToday].sort(() => Math.random() - 0.5);
-                const shuffledCanReserve = [...canBeReserveToday].sort(() => Math.random() - 0.5);
+                // Shuffle for randomness using seeded random
+                const shuffledMustWork = [...mustWorkToday].sort(() => seededRandom() - 0.5);
+                const shuffledCanReserve = [...canBeReserveToday].sort(() => seededRandom() - 0.5);
                 
                 // Combine: priority to those who must work
                 let allWorkersOrdered = [...shuffledMustWork, ...shuffledCanReserve];
@@ -587,7 +603,12 @@
         }
         
         function renderTable() {
-            const schedule = generateSchedule();
+            // Use existing schedule or generate new one
+            if (!currentSchedule) {
+                currentSchedule = generateSchedule(true);
+            }
+            
+            const schedule = currentSchedule;
             const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
             
             let html = '<table><thead><tr><th class="worker-name">Ouvrier</th>';
@@ -642,6 +663,7 @@
         }
         
         function shuffleSchedule() {
+            currentSchedule = generateSchedule(false);
             renderTable();
         }
         
@@ -649,11 +671,13 @@
             document.getElementById('workerCount').textContent = `${numWorkers} ouvriers`;
             document.getElementById('monthName').textContent = monthNames[selectedMonth - 1];
             document.getElementById('yearName').textContent = selectedYear;
+            // Generate new schedule when settings change
+            currentSchedule = generateSchedule(true);
             renderTable();
         }
         
         function downloadExcel() {
-            const schedule = generateSchedule();
+            const schedule = currentSchedule || generateSchedule(true);
             const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
             
             let csv = 'Ouvrier';
@@ -682,17 +706,83 @@
             link.click();
         }
         
+        function shareWhatsApp() {
+            const schedule = currentSchedule || generateSchedule(true);
+            const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
+            
+            // Create formatted message
+            let message = `🚄 *ONCF - Tableau de Roulement*\n`;
+            message += `📅 *${monthNames[selectedMonth - 1]} ${selectedYear}*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            // Add workers and their schedules
+            for (let w = 0; w < numWorkers; w++) {
+                message += `👤 *Ouvrier ${w + 1}*\n`;
+                
+                let weekSchedule = '';
+                let restDays = 0;
+                
+                for (let day = 0; day < Math.min(daysInMonth, 31); day++) {
+                    const assignment = schedule[day].workers[w] || '-';
+                    const dayNum = day + 1;
+                    const dayName = getDayName(dayNum, selectedMonth, selectedYear);
+                    
+                    // Format assignment
+                    let emoji = '';
+                    if (assignment.includes('Repos')) {
+                        emoji = '😴';
+                        restDays++;
+                    } else if (assignment.includes('Gare')) {
+                        emoji = '🚉';
+                    } else if (assignment.includes('Port')) {
+                        emoji = '⚓';
+                    } else if (assignment.includes('Neuf')) {
+                        emoji = '🆕';
+                    } else if (assignment.includes('Réserve')) {
+                        emoji = '⏸️';
+                    }
+                    
+                    weekSchedule += `${dayNum}/${selectedMonth} (${dayName}): ${emoji} ${assignment}\n`;
+                    
+                    // Add separator every 7 days for readability
+                    if ((day + 1) % 7 === 0 && day < daysInMonth - 1) {
+                        weekSchedule += '- - - - -\n';
+                    }
+                }
+                
+                message += weekSchedule;
+                message += `📊 Total repos: ${restDays} jours\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+            }
+            
+            message += `✅ *Légende:*\n`;
+            message += `🚉 Gare | ⚓ Port | 🆕 Neuf\n`;
+            message += `😴 Repos | ⏸️ Réserve\n`;
+            message += `M=Matin | S=Soir\n\n`;
+            message += `🇲🇦 *ONCF Maroc* - Office National des Chemins de Fer`;
+            
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Open WhatsApp with message
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
         document.getElementById('monthSelect').addEventListener('change', function() {
             selectedMonth = parseInt(this.value);
+            currentSchedule = null; // Reset schedule for new month
             updateUI();
         });
         
         document.getElementById('yearSelect').addEventListener('change', function() {
             selectedYear = parseInt(this.value);
+            currentSchedule = null; // Reset schedule for new year
             updateUI();
         });
         
-        // Initialize
+        // Initialize with seed for consistent first load
+        currentSchedule = generateSchedule(true);
         renderTable();
     </script>
 </body>
