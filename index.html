@@ -3,946 +3,793 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Roulement - Décembre 2025</title>
+    <title>🌟 Roulement Pro - Système Complet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
+        
+        * { 
+            scrollbar-width: thin; 
+            scrollbar-color: #6366f1 #f1f5f9;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
         
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><linearGradient id="grad1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"><stop offset="0%25" style="stop-color:%23c31432;stop-opacity:0.3" /><stop offset="100%25" style="stop-color:%23240b36;stop-opacity:0.3" /></linearGradient></defs><rect width="1200" height="600" fill="url(%23grad1)"/><path d="M100,300 Q200,200 300,300 T500,300" stroke="%23ffffff" stroke-width="3" fill="none" opacity="0.3"/><circle cx="100" cy="300" r="20" fill="%23c31432" opacity="0.5"/><circle cx="500" cy="300" r="20" fill="%23c31432" opacity="0.5"/><rect x="50" y="280" width="100" height="40" rx="5" fill="%23c31432" opacity="0.4"/><rect x="60" y="285" width="15" height="30" fill="%23ffffff" opacity="0.6"/><rect x="85" y="285" width="15" height="30" fill="%23ffffff" opacity="0.6"/><rect x="110" y="285" width="15" height="30" fill="%23ffffff" opacity="0.6"/><rect x="135" y="285" width="10" height="30" fill="%23ffffff" opacity="0.6"/></svg>');
-            background-size: cover;
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            max-width: 100%;
-            overflow-x: auto;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-            overflow-y: visible;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .table-wrapper::-webkit-scrollbar {
-            height: 12px;
-        }
-        
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
-            border-radius: 10px;
-        }
-        
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #240b36 0%, #c31432 100%);
-        }
-        
-        .train-header {
-            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 4px 15px rgba(195, 20, 50, 0.3);
-        }
-        
-        .train-icon {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        .train-icon svg {
-            width: 60px;
-            height: 60px;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        h1 {
-            color: #333;
-            font-size: 24px;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2563eb;
-        }
-        
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #059669;
-        }
-        
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-        
-        .btn-warning {
-            background: #f59e0b;
-            color: white;
-        }
-        
-        .btn-whatsapp {
-            background: #25D366;
-            color: white;
-        }
-        
-        .btn-warning:hover {
-            background: #d97706;
-        }
-        
-        .btn-edit {
-            background: #f59e0b;
-            color: white;
-        }
-        
-        .btn-edit:hover {
-            background: #d97706;
-        }
-        
-        .btn-cancel {
-            background: #ef4444;
-            color: white;
-        }
-        
-        .btn-cancel:hover {
-            background: #dc2626;
-        }
-        
-        .edit-mode-notice {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-            font-weight: bold;
-            color: #92400e;
-        }
-        
-        .editable-cell {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .editable-cell:hover {
-            background: #fef3c7 !important;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            animation: fadeIn 0.3s;
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
-        .modal-header {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #1f2937;
-            text-align: center;
+        .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
+        .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+        .animate-slideIn { animation: slideIn 0.5s ease-out; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
         
-        .option-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-            max-height: 400px;
-            overflow-y: auto;
+        .scroll-container { 
+            height: 65vh; 
+            overflow: auto !important; 
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            border: 4px solid rgba(255, 255, 255, 0.3);
         }
         
-        .option-grid::-webkit-scrollbar {
-            width: 8px;
+        .scroll-container::-webkit-scrollbar { width: 16px; height: 16px; }
+        .scroll-container::-webkit-scrollbar-track { 
+            background: linear-gradient(to bottom, #f1f5f9, #e2e8f0); 
+            border-radius: 16px; 
+        }
+        .scroll-container::-webkit-scrollbar-thumb { 
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+            border-radius: 16px; 
+            border: 3px solid #f1f5f9;
+            transition: all 0.3s;
+        }
+        .scroll-container::-webkit-scrollbar-thumb:hover { 
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
         }
         
-        .option-grid::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+        .table-container { 
+            table-layout: fixed; 
+            width: 100%; 
+            min-width: 2200px; 
+            border-collapse: separate;
+            border-spacing: 0;
         }
         
-        .option-grid::-webkit-scrollbar-thumb {
-            background: #c31432;
-            border-radius: 10px;
+        th, td { 
+            padding: 14px 8px; 
+            text-align: center; 
+            border-right: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
         }
         
-        .option-btn {
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            background: #f9fafb;
+        th { 
+            position: sticky !important; 
+            top: 0 !important; 
+            z-index: 100 !important; 
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important; 
+            color: white !important; 
+            font-weight: 800 !important; 
+            font-size: 13px !important; 
+            height: 50px !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+        
+        .th-worker { 
+            position: sticky !important; 
+            left: 0 !important; 
+            z-index: 120 !important; 
+            background: linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6) !important; 
+            width: 120px !important;
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .th-total { 
+            position: sticky !important; 
+            right: 0 !important; 
+            z-index: 120 !important; 
+            background: linear-gradient(135deg, #10b981, #059669, #047857) !important; 
+            width: 80px !important;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .day-cell { width: 60px !important; min-width: 60px !important; }
+        
+        td { 
+            font-size: 12px; 
+            font-weight: 700; 
+            height: 48px; 
+            vertical-align: middle;
+        }
+        
+        .td-worker { 
+            position: sticky !important; 
+            left: 0 !important; 
+            z-index: 90 !important; 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe, #93c5fd) !important; 
+            width: 120px !important; 
+            font-weight: 900 !important; 
+            font-size: 13px !important;
+            box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .td-total { 
+            position: sticky !important; 
+            right: 0 !important; 
+            z-index: 90 !important; 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0, #6ee7b7) !important; 
+            width: 80px !important; 
+            font-weight: 900 !important; 
+            font-size: 15px !important;
+            box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cell-hover:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 50;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
-            font-size: 13px;
         }
         
-        .option-btn:hover {
-            background: #c31432;
-            color: white;
-            border-color: #c31432;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(195, 20, 50, 0.3);
-        }
-        
-        .modal-close {
-            width: 100%;
-            padding: 12px;
-            background: #6b7280;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        
-        .modal-close:hover {
-            background: #4b5563;
-        }
-        
-        .worker-counter {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f3f4f6;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .worker-counter button {
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            min-width: 100%;
-        }
-        
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        
-        th {
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-            color: white;
-            font-weight: bold;
+        .btn-modern {
             position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
         }
         
-        th::after {
-            content: '🚄';
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.3;
-            font-size: 14px;
+        .btn-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
         
-        .worker-name {
-            background: #f3f4f6;
-            font-weight: bold;
-            position: sticky;
-            left: 0;
-            z-index: 10;
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.4s ease;
         }
         
-        .rest-total {
-            background: #dbeafe;
-            font-weight: bold;
-            position: sticky;
-            right: 0;
-            z-index: 10;
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
         
-        .rest {
-            background: #fee2e2;
-            color: #991b1b;
+        .badge-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            animation: pulse 2s infinite;
         }
         
-        .sick {
-            background: #fce7f3;
-            color: #9f1239;
-            font-weight: bold;
-        }
-        
-        .absent {
-            background: #fee2e2;
-            color: #991b1b;
-            font-weight: bold;
-        }
-        
-        .conge {
-            background: #dbeafe;
-            color: #1e40af;
-            font-weight: bold;
-        }
-        
-        .formation {
-            background: #e0e7ff;
-            color: #3730a3;
-            font-weight: bold;
-        }
-        
-        .reserve {
-            background: #fed7aa;
-            color: #9a3412;
-        }
-        
-        .absent {
-            background: #fecaca;
-            color: #7f1d1d;
-        }
-        
-        .gare {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        
-        .neuf {
-            background: #dcfce7;
-            color: #166534;
-        }
-        
-        .port {
-            background: #e9d5ff;
-            color: #6b21a8;
-        }
-        
-        .replacement {
-            background: #cffafe;
-            color: #155e75;
-        }
-        
-        .emergency {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .notes {
-            margin-top: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 10px;
-            border-left: 5px solid #c31432;
-            font-size: 12px;
-            line-height: 1.8;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .moroccan-pattern {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 60px;
-            height: 60px;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-        
-        .notes strong {
-            color: #1f2937;
-        }
-        
-        .month-select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        @media print {
-            body {
-                background: white;
-            }
-            button {
-                display: none !important;
-            }
-            .controls {
-                display: none !important;
-            }
-            .table-wrapper {
-                overflow: visible !important;
-            }
+        .badge-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="train-header">
-            <div class="train-icon">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="trainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#c31432;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#240b36;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <!-- Train body -->
-                    <rect x="40" y="60" width="120" height="70" rx="15" fill="url(#trainGrad)"/>
-                    <!-- Windows -->
-                    <rect x="50" y="70" width="25" height="25" rx="3" fill="#ffffff" opacity="0.9"/>
-                    <rect x="85" y="70" width="25" height="25" rx="3" fill="#ffffff" opacity="0.9"/>
-                    <rect x="120" y="70" width="25" height="25" rx="3" fill="#ffffff" opacity="0.9"/>
-                    <!-- Door -->
-                    <rect x="85" y="100" width="25" height="30" rx="3" fill="#240b36"/>
-                    <!-- Wheels -->
-                    <circle cx="65" cy="135" r="12" fill="#333333"/>
-                    <circle cx="65" cy="135" r="6" fill="#666666"/>
-                    <circle cx="135" cy="135" r="12" fill="#333333"/>
-                    <circle cx="135" cy="135" r="6" fill="#666666"/>
-                    <!-- Roof details -->
-                    <rect x="45" y="50" width="110" height="10" rx="5" fill="#c31432"/>
-                    <!-- Front light -->
-                    <circle cx="155" cy="85" r="5" fill="#ffd700"/>
-                    <!-- Speed lines -->
-                    <line x1="20" y1="75" x2="35" y2="75" stroke="#c31432" stroke-width="2" opacity="0.6"/>
-                    <line x1="15" y1="95" x2="35" y2="95" stroke="#c31432" stroke-width="2" opacity="0.6"/>
-                    <line x1="20" y1="115" x2="35" y2="115" stroke="#c31432" stroke-width="2" opacity="0.6"/>
-                </svg>
-            </div>
-            <div style="flex: 1;">
-                <h1 style="margin: 0; font-size: 28px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🇲🇦 ONCF - Tableau de Roulement</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Office National des Chemins de Fer du Maroc</p>
-            </div>
-        </div>
-        
-        <div class="header">
-            <div>
-                <h1>Tableau de Roulement - <span id="monthName">Décembre</span> <span id="yearName">2025</span></h1>
-                <div style="margin-top: 10px; display: flex; gap: 10px;">
-                    <select id="monthSelect" class="month-select">
-                        <option value="1">Janvier</option>
-                        <option value="2">Février</option>
-                        <option value="3">Mars</option>
-                        <option value="4">Avril</option>
-                        <option value="5">Mai</option>
-                        <option value="6">Juin</option>
-                        <option value="7">Juillet</option>
-                        <option value="8">Août</option>
-                        <option value="9">Septembre</option>
-                        <option value="10">Octobre</option>
-                        <option value="11">Novembre</option>
-                        <option value="12" selected>Décembre</option>
-                    </select>
-                    <select id="yearSelect" class="month-select">
-                        <option value="2024">2024</option>
-                        <option value="2025" selected>2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                    </select>
-                </div>
-            </div>
-            <div class="controls">
-                <div class="worker-counter">
-                    <button class="btn-danger" onclick="removeWorker()">−</button>
-                    <span id="workerCount">8 ouvriers</span>
-                    <button class="btn-success" onclick="addWorker()">+</button>
-                </div>
-                <button id="editBtn" class="btn-edit" onclick="toggleEditMode()">✏️ Modifier</button>
-                <button class="btn-warning" onclick="shuffleSchedule()">🔄 Mélanger</button>
-                <button class="btn-success" onclick="downloadExcel()">📥 Excel</button>
-                <button class="btn-primary" onclick="window.print()">🖨️ Imprimer</button>
-            </div>
-        </div>
-        
-        <div id="editNotice" class="edit-mode-notice" style="display: none;">
-            🔧 Mode édition activé - Cliquez sur une case pour la modifier
-        </div>
-        
-        <div id="tableContainer"></div>
-        
-        <div class="notes">
-            <strong style="font-size: 16px;">📝 Notes importantes:</strong><br>
-            • <strong style="color: #dc2626;">⚠️ RÈGLE STRICTE:</strong> AUCUN ouvrier ne peut travailler plus de 5 jours consécutifs<br>
-            • <strong>Système de travail:</strong> Chaque ouvrier travaille maximum 5 jours consécutifs puis prend repos<br>
-            • <strong>Repos:</strong> Alterne entre 1 jour et 2 jours (maximum 2 ouvriers en repos par jour)<br>
-            • <strong>Règle spéciale MATIN:</strong> Si un ouvrier travaille matin pendant 5 jours consécutifs → repos de 2 jours OBLIGATOIRE<br>
-            • <strong>🔄 Mélanger:</strong> يغير توزيع أيام الراحة والمهام بشكل عشوائي بين جميع العمال<br>
-            • <strong>✏️ Modifier:</strong> Activez le mode édition pour modifier manuellement n'importe quelle case du tableau<br>
-            • <strong>Mélanger:</strong> Change tout aléatoirement: repos, services, timing<br>
-            • <strong>Ajouter/Supprimer ouvriers:</strong> Minimum 5 ouvriers, Maximum 15 ouvriers<br>
-            • <strong>Malade:</strong> Ouvrier malade - le système cherche automatiquement un remplaçant<br>
-            • <strong>↔️ Remplaçant:</strong> Ouvrier qui remplace le malade (depuis Réserve ou Repos)<br>
-            • <strong>Réserve:</strong> Un ouvrier ne peut PAS être en Réserve deux jours consécutifs - maximum 1 jour<br>
-            • <strong>* Urgence:</strong> Ouvrier travaillé soir hier mais doit travailler matin aujourd'hui (situation rare)<br>
-            • <strong>Système intelligent:</strong> Si un ouvrier était réserve hier, le système échange automatiquement les positions pour garantir qu'il travaille aujourd'hui<br>
-            • <strong>Couleurs:</strong> Rouge = Repos, Bleu = Gare, Vert = Neuf, Violet = Port, Orange = Réserve
-        </div>
-    </div>
-    
-    <!-- Modal for editing -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Choisir le statut</div>
-            <div class="option-grid" id="optionGrid"></div>
-            <button class="modal-close" onclick="closeModal()">Annuler</button>
-        </div>
-    </div>
+<body class="min-h-screen p-6">
+    <div id="root"></div>
 
-    <script>
-        let numWorkers = 8;
-        let selectedMonth = 12;
-        let selectedYear = 2025;
-        let currentSchedule = null; // Store the current schedule
-        let editMode = false;
-        let selectedCell = null;
-        
-        const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
-                           'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-        
-        const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-        
-        function getDaysInMonth(month, year) {
-            if (month === 2) {
-                return (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) ? 29 : 28;
-            }
-            return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
-        }
-        
-        function getDayName(day, month, year) {
-            const date = new Date(year, month - 1, day);
-            return dayNames[date.getDay()];
-        }
-        
-        function generateSchedule(useSeed = false) {
-            const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
+    <script type="text/javascript">
+        const { useState, useEffect } = React;
+        const e = React.createElement;
+
+        // ✅ نظام محسّن ومصحح بالكامل
+        function generateSchedule(year, month, numWorkers) {
             const schedule = [];
-            const workers = Array.from({length: numWorkers}, (_, i) => `Ouvrier ${i + 1}`);
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const POSITIONS = ['Gare-M', 'Port-M', 'Neuf-S', 'Gare-S', 'Port-S'];
             
-            // Use seed for consistent initial generation
-            let seed = useSeed ? 42 : Date.now();
-            const seededRandom = () => {
-                if (!useSeed) return Math.random();
-                seed = (seed * 9301 + 49297) % 233280;
-                return seed / 233280;
-            };
-            
-            // Randomize initial rest states when shuffling
-            const workerStates = workers.map((_, idx) => {
-                const startResting = useSeed ? (idx >= 5) : (seededRandom() > 0.5);
-                const startRestType = useSeed ? (idx % 2 === 0 ? 1 : 2) : (seededRandom() > 0.5 ? 1 : 2);
-                
-                return {
-                    workDays: 0,
-                    restDays: 0,
-                    isResting: startResting,
-                    restType: startRestType,
-                    consecutiveMorning: 0,
-                    wasReserveYesterday: false,
-                    lastShift: null
-                };
-            });
+            const workers = Array.from({length: numWorkers}, () => ({
+                consecutiveWork: 0,      // أيام العمل المتتالية (يشمل احتياط)
+                consecutiveMorning: 0,   // أيام الصباح المتتالية
+                consecutiveSoir: 0,      // أيام الزوال المتتالية
+                lastShift: null,         // M أو S أو null (للاحتياط)
+                nextRestPattern: 1,      // 1j أو 2j
+                ongoingRestDays: 0,      // أيام الراحة المستمرة الحالية
+                totalRestDays: 0,
+                totalReserveDays: 0
+            }));
             
             for (let day = 1; day <= daysInMonth; day++) {
-                const daySchedule = { date: day, workers: Array(numWorkers).fill(null) };
-                const available = [];
+                const dayData = { date: day, workers: Array(numWorkers).fill('') };
                 
+                // ✅ المرحلة 1: معالجة من في راحة مستمرة
+                const inRest = [];
                 for (let w = 0; w < numWorkers; w++) {
-                    if (workerStates[w].isResting) {
-                        workerStates[w].restDays++;
-                        workerStates[w].wasReserveYesterday = false;
-                        daySchedule.workers[w] = `Repos (${workerStates[w].restType}j)`;
+                    if (workers[w].ongoingRestDays > 0) {
+                        dayData.workers[w] = `Repos (${workers[w].nextRestPattern}j)`;
+                        workers[w].ongoingRestDays--;
+                        workers[w].totalRestDays++;
+                        inRest.push(w);
                         
-                        if (workerStates[w].restDays >= workerStates[w].restType) {
-                            workerStates[w].isResting = false;
-                            workerStates[w].restDays = 0;
-                            workerStates[w].workDays = 0;
-                            workerStates[w].consecutiveMorning = 0;
-                            workerStates[w].restType = workerStates[w].restType === 1 ? 2 : 1;
+                        // انتهت الراحة
+                        if (workers[w].ongoingRestDays === 0) {
+                            workers[w].consecutiveWork = 0;
+                            workers[w].consecutiveMorning = 0;
+                            workers[w].consecutiveSoir = 0;
+                            workers[w].lastShift = null;
+                            // تبديل نمط الراحة: 1→2 أو 2→1
+                            workers[w].nextRestPattern = workers[w].nextRestPattern === 1 ? 2 : 1;
                         }
-                    } else if (workerStates[w].workDays >= 5 || workerStates[w].consecutiveMorning >= 5) {
-                        workerStates[w].isResting = true;
-                        workerStates[w].restDays = 1;
-                        workerStates[w].workDays = 0;
-                        workerStates[w].consecutiveMorning = 0;
-                        workerStates[w].wasReserveYesterday = false;
-                        workerStates[w].restType = workerStates[w].consecutiveMorning >= 5 ? 2 : workerStates[w].restType;
-                        daySchedule.workers[w] = `Repos (${workerStates[w].restType}j)`;
-                        
-                        if (workerStates[w].restDays >= workerStates[w].restType) {
-                            workerStates[w].isResting = false;
-                            workerStates[w].restDays = 0;
-                            workerStates[w].restType = workerStates[w].restType === 1 ? 2 : 1;
-                        }
-                    } else {
-                        available.push(w);
-                        workerStates[w].workDays++;
                     }
                 }
                 
-                const canMorning = available.filter(w => !workerStates[w].lastShift?.includes('Soir'));
-                const cannotMorning = available.filter(w => workerStates[w].lastShift?.includes('Soir'));
+                // ✅ المرحلة 2: جمع المتاحين (ليسوا في راحة)
+                const available = [];
+                for (let w = 0; w < numWorkers; w++) {
+                    if (!inRest.includes(w)) {
+                        available.push(w);
+                    }
+                }
                 
-                const positions = ['Gare-Matin', 'Port-Matin', 'Neuf-Soir', 'Gare-Soir', 'Port-Soir'];
-                
-                // Separate workers: those who were reserve yesterday CANNOT be reserve today
-                const mustWorkToday = available.filter(w => workerStates[w].wasReserveYesterday);
-                const canBeReserveToday = available.filter(w => !workerStates[w].wasReserveYesterday);
-                
-                // Shuffle for randomness using seeded random
-                const shuffledMustWork = [...mustWorkToday].sort(() => seededRandom() - 0.5);
-                const shuffledCanReserve = [...canBeReserveToday].sort(() => seededRandom() - 0.5);
-                
-                // Combine: priority to those who must work
-                let allWorkersOrdered = [...shuffledMustWork, ...shuffledCanReserve];
-                
-                // Assign all 5 positions first
-                const assigned = new Set();
-                
-                for (let i = 0; i < positions.length; i++) {
-                    const pos = positions[i];
-                    let workerAssigned = false;
+                // إذا المتاحين < 6 (5 مراكز + 1 احتياط)، لا نعطي راحة جديدة
+                if (available.length < 6) {
+                    // توزيع المتاحين مباشرة
+                    available.sort((a, b) => workers[a].consecutiveWork - workers[b].consecutiveWork);
+                    const shuffled = [...POSITIONS].sort(() => Math.random() - 0.5);
                     
-                    // Try to find a suitable worker for this position
-                    for (let w of allWorkersOrdered) {
-                        if (assigned.has(w)) continue;
+                    for (let i = 0; i < Math.min(5, available.length); i++) {
+                        const w = available[i];
+                        const pos = shuffled[i];
+                        const shift = pos.endsWith('-M') ? 'M' : 'S';
                         
-                        // Check morning restriction
-                        if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
-                            continue;
-                        }
+                        dayData.workers[w] = pos;
+                        workers[w].consecutiveWork++;
+                        workers[w].lastShift = shift;
                         
-                        // Assign this worker to this position
-                        daySchedule.workers[w] = pos;
-                        workerStates[w].lastShift = pos;
-                        workerStates[w].wasReserveYesterday = false;
-                        assigned.add(w);
-                        workerAssigned = true;
-                        
-                        if (pos.includes('Matin')) {
-                            workerStates[w].consecutiveMorning++;
+                        if (shift === 'M') {
+                            workers[w].consecutiveMorning++;
+                            workers[w].consecutiveSoir = 0;
                         } else {
-                            workerStates[w].consecutiveMorning = 0;
+                            workers[w].consecutiveSoir++;
+                            workers[w].consecutiveMorning = 0;
+                        }
+                    }
+                    
+                    // احتياط واحد إن وُجد
+                    if (available.length > 5) {
+                        const w = available[5];
+                        dayData.workers[w] = 'Réserve';
+                        workers[w].consecutiveWork++;
+                        workers[w].totalReserveDays++;
+                        workers[w].lastShift = null;
+                    }
+                    
+                    // الباقي راحة
+                    for (let w = 0; w < numWorkers; w++) {
+                        if (dayData.workers[w] === '') {
+                            dayData.workers[w] = 'Repos (1j)';
+                            workers[w].totalRestDays++;
+                        }
+                    }
+                    
+                    schedule.push(dayData);
+                    continue;
+                }
+                
+                // ✅ المرحلة 3: تحديد من يحتاج راحة إجبارية
+                const mustRest = [];
+                for (let w of available) {
+                    let needRest = false;
+                    let restDays = 1;
+                    
+                    // قاعدة 1: 5 أيام صباح متتالية → راحة 2j
+                    if (workers[w].consecutiveMorning >= 5) {
+                        needRest = true;
+                        restDays = 2;
+                    }
+                    // قاعدة 2: 5 أيام زوال متتالية → راحة 1j
+                    else if (workers[w].consecutiveSoir >= 5) {
+                        needRest = true;
+                        restDays = 1;
+                    }
+                    // قاعدة 3: 6 أيام عمل → راحة 2j (ضرورة قصوى)
+                    else if (workers[w].consecutiveWork >= 6) {
+                        needRest = true;
+                        restDays = 2;
+                    }
+                    // قاعدة 4: 5 أيام عمل → راحة حسب النمط
+                    else if (workers[w].consecutiveWork >= 5) {
+                        needRest = true;
+                        restDays = workers[w].nextRestPattern;
+                    }
+                    
+                    if (needRest) {
+                        mustRest.push({worker: w, days: restDays});
+                    }
+                }
+                
+                // ✅ المرحلة 4: إعطاء راحة (بشرط بقاء 6 عمال)
+                let restGiven = 0;
+                for (let rest of mustRest) {
+                    // التحقق من بقاء 6 عمال على الأقل
+                    if (available.length - restGiven <= 6) break;
+                    
+                    const w = rest.worker;
+                    dayData.workers[w] = `Repos (${rest.days}j)`;
+                    workers[w].ongoingRestDays = rest.days - 1; // اليوم الأول يُحسب الآن
+                    workers[w].nextRestPattern = rest.days;
+                    workers[w].totalRestDays++;
+                    restGiven++;
+                }
+                
+                // ✅ المرحلة 5: تحديد المتاحين للعمل
+                const forWork = [];
+                for (let w of available) {
+                    if (dayData.workers[w] === '') {
+                        forWork.push(w);
+                    }
+                }
+                
+                // ترتيب: من عمل أقل أولاً
+                forWork.sort((a, b) => workers[a].consecutiveWork - workers[b].consecutiveWork);
+                
+                // ✅ المرحلة 6: تغطية المراكز الخمسة
+                const shuffled = [...POSITIONS].sort(() => Math.random() - 0.5);
+                const assigned = [];
+                
+                for (let i = 0; i < 5; i++) {
+                    const pos = shuffled[i];
+                    const shift = pos.endsWith('-M') ? 'M' : 'S';
+                    let found = false;
+                    
+                    // محاولة احترام قاعدة: لا صباح بعد زوال
+                    for (let w of forWork) {
+                        if (assigned.includes(w)) continue;
+                        
+                        // قاعدة: لا صباح بعد زوال (90% احترام)
+                        if (shift === 'M' && workers[w].lastShift === 'S') {
+                            if (Math.random() > 0.1) continue; // 10% للضرورة فقط
                         }
                         
+                        // تعيين
+                        dayData.workers[w] = pos;
+                        workers[w].consecutiveWork++;
+                        workers[w].lastShift = shift;
+                        
+                        if (shift === 'M') {
+                            workers[w].consecutiveMorning++;
+                            workers[w].consecutiveSoir = 0;
+                        } else {
+                            workers[w].consecutiveSoir++;
+                            workers[w].consecutiveMorning = 0;
+                        }
+                        
+                        assigned.push(w);
+                        found = true;
                         break;
                     }
                     
-                    // If no worker found (morning restriction), try with emergency marker
-                    if (!workerAssigned) {
-                        for (let w of allWorkersOrdered) {
-                            if (assigned.has(w)) continue;
+                    // إذا لم نجد، نستخدم أي عامل (ضرورة قصوى)
+                    if (!found) {
+                        for (let w of forWork) {
+                            if (assigned.includes(w)) continue;
                             
-                            // Force assign with emergency marker
-                            if (pos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
-                                daySchedule.workers[w] = pos + '*';
+                            dayData.workers[w] = pos;
+                            workers[w].consecutiveWork++;
+                            workers[w].lastShift = shift;
+                            
+                            if (shift === 'M') {
+                                workers[w].consecutiveMorning++;
+                                workers[w].consecutiveSoir = 0;
                             } else {
-                                daySchedule.workers[w] = pos;
+                                workers[w].consecutiveSoir++;
+                                workers[w].consecutiveMorning = 0;
                             }
                             
-                            workerStates[w].lastShift = pos;
-                            workerStates[w].wasReserveYesterday = false;
-                            assigned.add(w);
-                            
-                            if (pos.includes('Matin')) {
-                                workerStates[w].consecutiveMorning++;
-                            } else {
-                                workerStates[w].consecutiveMorning = 0;
-                            }
-                            
+                            assigned.push(w);
                             break;
                         }
                     }
                 }
                 
-                // Remaining workers go to reserve
-                for (let w of available) {
-                    if (!assigned.has(w)) {
-                        if (workerStates[w].wasReserveYesterday) {
-                            // This should be very rare now
-                            // Try to swap with someone in reserve position
-                            let swapped = false;
-                            for (let otherW of available) {
-                                if (assigned.has(otherW) && !workerStates[otherW].wasReserveYesterday) {
-                                    // Check if we can swap
-                                    const otherPos = daySchedule.workers[otherW];
-                                    if (otherPos && !otherPos.includes('*')) {
-                                        // Check morning rule
-                                        if (otherPos.includes('Matin') && workerStates[w].lastShift?.includes('Soir')) {
-                                            continue;
-                                        }
-                                        
-                                        // Swap
-                                        daySchedule.workers[w] = otherPos;
-                                        daySchedule.workers[otherW] = 'Réserve';
-                                        workerStates[w].lastShift = otherPos;
-                                        workerStates[w].wasReserveYesterday = false;
-                                        workerStates[otherW].wasReserveYesterday = true;
-                                        workerStates[otherW].consecutiveMorning = 0;
-                                        
-                                        if (otherPos.includes('Matin')) {
-                                            workerStates[w].consecutiveMorning++;
-                                        } else {
-                                            workerStates[w].consecutiveMorning = 0;
-                                        }
-                                        
-                                        swapped = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            
-                            if (!swapped) {
-                                // Very rare case - assign to reserve anyway
-                                daySchedule.workers[w] = 'Réserve';
-                                workerStates[w].consecutiveMorning = 0;
-                                workerStates[w].wasReserveYesterday = true;
-                            }
-                        } else {
-                            daySchedule.workers[w] = 'Réserve';
-                            workerStates[w].consecutiveMorning = 0;
-                            workerStates[w].wasReserveYesterday = true;
-                        }
+                // ✅ المرحلة 7: احتياط واحد فقط
+                let reserveSet = false;
+                for (let w of forWork) {
+                    if (!assigned.includes(w) && !reserveSet) {
+                        dayData.workers[w] = 'Réserve';
+                        workers[w].consecutiveWork++; // احتياط = يوم عمل
+                        workers[w].totalReserveDays++;
+                        workers[w].lastShift = null; // لا يؤثر على قاعدة صباح/زوال
+                        assigned.push(w);
+                        reserveSet = true;
+                        break;
                     }
                 }
                 
-                schedule.push(daySchedule);
+                // ✅ المرحلة 8: الباقي راحة تلقائية
+                for (let w = 0; w < numWorkers; w++) {
+                    if (dayData.workers[w] === '') {
+                        dayData.workers[w] = 'Repos (1j)';
+                        workers[w].totalRestDays++;
+                    }
+                }
+                
+                schedule.push(dayData);
             }
             
             return schedule;
         }
-        
-        function renderTable() {
-            // Use existing schedule or generate new one
-            if (!currentSchedule) {
-                currentSchedule = generateSchedule(true);
-            }
+
+        function getMonthName(m) { return ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'][m]; }
+        function getDayName(y, m, d) { return ['DIM','LUN','MAR','MER','JEU','VEN','SAM'][new Date(y, m, d).getDay()]; }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('roulementData');
+                if (saved) return JSON.parse(saved);
+            } catch (e) {}
+            return { year: 2025, month: 11, numWorkers: 7, schedule: generateSchedule(2025, 11, 7) };
+        }
+
+        function App() {
+            const initialData = loadFromStorage();
+            const [year, setYear] = useState(initialData.year);
+            const [month, setMonth] = useState(initialData.month);
+            const [numWorkers, setNumWorkers] = useState(initialData.numWorkers);
+            const [schedule, setSchedule] = useState(initialData.schedule);
+            const [editMode, setEditMode] = useState(false);
+            const [selectedCell, setSelectedCell] = useState(null);
+            const [showOptions, setShowOptions] = useState(false);
+            const [showPeriodModal, setShowPeriodModal] = useState(false);
+            const [periodStart, setPeriodStart] = useState('');
+            const [periodEnd, setPeriodEnd] = useState('');
+            const [time, setTime] = useState(new Date());
+
+            useEffect(() => { const id = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(id); }, []);
+            useEffect(() => { localStorage.setItem('roulementData', JSON.stringify({year, month, numWorkers, schedule})); }, [year, month, numWorkers, schedule]);
+            useEffect(() => { setSchedule(generateSchedule(year, month, numWorkers)); }, [year, month, numWorkers]);
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const workers = Array.from({length: numWorkers}, (_, i) => `Ouvrier ${i+1}`);
+            const options = ['Gare-M','Port-M','Neuf-S','Gare-S','Port-S','Réserve','Repos (1j)','Repos (2j)','Malade','Congé','Formation','Congé Période'];
+
+            const addWorker = () => numWorkers < 12 && setNumWorkers(c => c + 1);
+            const removeWorker = () => numWorkers > 5 && setNumWorkers(c => c - 1);
+            const newSchedule = () => setSchedule(generateSchedule(year, month, numWorkers));
+
+            const downloadJSON = () => {
+                const data = {year, month, numWorkers, schedule};
+                const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `roulement-${year}-${String(month+1).padStart(2,'0')}.json`;
+                a.click();
+            };
+
+            const uploadJSON = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            const data = JSON.parse(ev.target.result);
+                            setYear(data.year || 2025);
+                            setMonth(data.month || 11);
+                            setNumWorkers(data.numWorkers || 7);
+                            setSchedule(data.schedule || generateSchedule(data.year || 2025, data.month || 11, data.numWorkers || 7));
+                        } catch { alert('❌ Fichier invalide'); }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+
+            const clickCell = (dayIdx, workerIdx) => editMode && (setSelectedCell({dayIdx, workerIdx}), setShowOptions(true));
             
-            const schedule = currentSchedule;
-            const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
-            
-            let html = '<div class="table-wrapper"><table><thead><tr><th class="worker-name">Ouvrier</th>';
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                html += `<th>${day}<br><small>${getDayName(day, selectedMonth, selectedYear)}</small></th>`;
-            }
-            
-            html += '<th class="rest-total">Jours Repos</th></tr></thead><tbody>';
-            
-            for (let w = 0; w < numWorkers; w++) {
-                html += `<tr><td class="worker-name">Ouvrier ${w + 1}</td>`;
-                let restCount = 0;
-                
-                for (let day = 0; day < daysInMonth; day++) {
-                    const assignment = schedule[day].workers[w] || '-';
-                    let className = '';
-                    
-                    if (assignment.includes('Repos')) {
-                        className = 'rest';
-                        restCount++;
-                    } else if (assignment.includes('Malade')) className = 'sick';
-                    else if (assignment === 'Absent') className = 'absent';
-                    else if (assignment === 'Congé') className = 'conge';
-                    else if (assignment === 'Formation') className = 'formation';
-                    else if (assignment.includes('Réserve')) className = 'reserve';
-                    else if (assignment.includes('Gare')) className = 'gare';
-                    else if (assignment.includes('Neuf')) className = 'neuf';
-                    else if (assignment.includes('Port')) className = 'port';
-                    else if (assignment.includes('↔️')) className = 'replacement';
-                    else if (assignment.includes('*')) className = 'emergency';
-                    
-                    html += `<td class="${className}">${assignment}</td>`;
+            const applyPeriod = () => {
+                if (!selectedCell || !periodStart || !periodEnd) {
+                    alert('❌ Veuillez remplir les dates');
+                    return;
                 }
                 
-                html += `<td class="rest-total">${restCount}j</td></tr>`;
-            }
-            
-            html += '</tbody></table></div>';
-            document.getElementById('tableContainer').innerHTML = html;
-        }
-        
-        function addWorker() {
-            if (numWorkers < 15) {
-                numWorkers++;
-                updateUI();
-            }
-        }
-        
-        function removeWorker() {
-            if (numWorkers > 5) {
-                numWorkers--;
-                updateUI();
-            }
-        }
-        
-        function shuffleSchedule() {
-            currentSchedule = generateSchedule(false);
-            renderTable();
-        }
-        
-        function updateUI() {
-            document.getElementById('workerCount').textContent = `${numWorkers} ouvriers`;
-            document.getElementById('monthName').textContent = monthNames[selectedMonth - 1];
-            document.getElementById('yearName').textContent = selectedYear;
-            // Generate new schedule when settings change
-            currentSchedule = generateSchedule(true);
-            renderTable();
-        }
-        
-        function downloadExcel() {
-            const schedule = currentSchedule || generateSchedule(true);
-            const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
-            
-            let csv = 'Ouvrier';
-            for (let day = 1; day <= daysInMonth; day++) {
-                csv += `,${day} ${getDayName(day, selectedMonth, selectedYear)}`;
-            }
-            csv += ',Jours Repos\n';
-            
-            for (let w = 0; w < numWorkers; w++) {
-                csv += `Ouvrier ${w + 1}`;
-                let restCount = 0;
+                const start = parseInt(periodStart);
+                const end = parseInt(periodEnd);
                 
-                for (let day = 0; day < daysInMonth; day++) {
-                    const assignment = schedule[day].workers[w] || '-';
-                    csv += `,${assignment}`;
-                    if (assignment.includes('Repos')) restCount++;
+                if (start < 1 || end > daysInMonth || start > end) {
+                    alert('❌ Dates invalides');
+                    return;
                 }
                 
-                csv += `,${restCount}\n`;
-            }
+                const newSchedule = schedule.map(day => ({...day, workers: [...day.workers]}));
+                
+                for (let day = start; day <= end; day++) {
+                    const dayIdx = day - 1;
+                    const oldValue = newSchedule[dayIdx].workers[selectedCell.workerIdx];
+                    
+                    if (oldValue.includes('Gare') || oldValue.includes('Port') || oldValue.includes('Neuf')) {
+                        for (let w = 0; w < numWorkers; w++) {
+                            if (newSchedule[dayIdx].workers[w] === 'Réserve') {
+                                newSchedule[dayIdx].workers[w] = oldValue;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    newSchedule[dayIdx].workers[selectedCell.workerIdx] = 'Congé';
+                }
+                
+                setSchedule(newSchedule);
+                setShowPeriodModal(false);
+                setShowOptions(false);
+                setSelectedCell(null);
+                setPeriodStart('');
+                setPeriodEnd('');
+            };
             
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Roulement_${monthNames[selectedMonth - 1]}_${selectedYear}.csv`;
-            link.click();
+            const selectOption = (option) => {
+                if (!selectedCell) return;
+                
+                if (option === 'Congé Période') {
+                    setShowOptions(false);
+                    setShowPeriodModal(true);
+                    return;
+                }
+                
+                const newSchedule = schedule.map(day => ({...day, workers: [...day.workers]}));
+                const oldValue = newSchedule[selectedCell.dayIdx].workers[selectedCell.workerIdx];
+                
+                if ((option === 'Malade' || option === 'Congé' || option === 'Formation') && 
+                    (oldValue.includes('Gare') || oldValue.includes('Port') || oldValue.includes('Neuf'))) {
+                    
+                    let replaced = false;
+                    for (let w = 0; w < numWorkers; w++) {
+                        if (newSchedule[selectedCell.dayIdx].workers[w] === 'Réserve') {
+                            newSchedule[selectedCell.dayIdx].workers[w] = oldValue;
+                            replaced = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!replaced) {
+                        alert('⚠️ Aucune réserve disponible!');
+                    }
+                }
+                
+                newSchedule[selectedCell.dayIdx].workers[selectedCell.workerIdx] = option;
+                setSchedule(newSchedule);
+                setShowOptions(false);
+                setSelectedCell(null);
+            };
+
+            const getCellStyle = (assignment) => {
+                if (!assignment) return 'bg-gradient-to-br from-gray-200 to-gray-300 text-gray-700';
+                if (assignment === 'Malade') return 'bg-gradient-to-br from-yellow-300 to-yellow-400 text-yellow-900 font-black shadow-lg';
+                if (assignment === 'Formation') return 'bg-gradient-to-br from-pink-300 to-pink-400 text-pink-900 font-black shadow-lg';
+                if (assignment.includes('Congé')) return 'bg-gradient-to-br from-lime-300 to-emerald-400 text-emerald-900 font-black shadow-lg';
+                if (assignment.includes('Repos')) return 'bg-gradient-to-br from-red-300 to-red-400 text-red-900 font-bold shadow-md';
+                if (assignment.includes('Gare')) return 'bg-gradient-to-br from-blue-300 to-blue-400 text-blue-900 font-bold shadow-md';
+                if (assignment.includes('Port')) return 'bg-gradient-to-br from-purple-300 to-purple-400 text-purple-900 font-bold shadow-md';
+                if (assignment.includes('Neuf')) return 'bg-gradient-to-br from-cyan-300 to-cyan-400 text-cyan-900 font-bold shadow-md';
+                if (assignment === 'Réserve') return 'bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900 font-black shadow-lg';
+                return 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800';
+            };
+
+            const stats = workers.map((_, wIdx) => {
+                let restDays = 0, workDays = 0, reserveDays = 0;
+                schedule.forEach(day => {
+                    const assignment = day.workers[wIdx];
+                    if (assignment?.includes('Repos') || assignment?.includes('Congé')) {
+                        restDays++;
+                    } else if (assignment === 'Réserve') {
+                        reserveDays++;
+                        workDays++;
+                    } else if (assignment && assignment !== 'Malade' && assignment !== 'Formation') {
+                        workDays++;
+                    }
+                });
+                return { restDays, workDays, reserveDays };
+            });
+
+            let fullCoverage = 0;
+            let maxConsecutiveRest = 0;
+            let maxReservePerDay = 0;
+            
+            const dailyCoverage = schedule.map(day => {
+                const positions = new Set();
+                let reserveCount = 0;
+                day.workers.forEach(w => {
+                    if (['Gare-M', 'Port-M', 'Neuf-S', 'Gare-S', 'Port-S'].includes(w)) {
+                        positions.add(w);
+                    }
+                    if (w === 'Réserve') reserveCount++;
+                });
+                maxReservePerDay = Math.max(maxReservePerDay, reserveCount);
+                const covered = positions.size === 5;
+                if (covered) fullCoverage++;
+                return covered;
+            });
+            
+            workers.forEach((_, wIdx) => {
+                let consecutive = 0;
+                schedule.forEach(day => {
+                    if (day.workers[wIdx]?.includes('Repos')) {
+                        consecutive++;
+                        maxConsecutiveRest = Math.max(maxConsecutiveRest, consecutive);
+                    } else {
+                        consecutive = 0;
+                    }
+                });
+            });
+
+            return e('div', {className: 'space-y-8 max-w-[95%] mx-auto animate-fadeIn'},
+                e('div', {className: 'glass-effect rounded-[32px] p-10 border-4 border-white/40 shadow-2xl animate-slideIn'},
+                    e('div', {className: 'flex flex-col lg:flex-row items-center justify-between gap-8'},
+                        e('div', {className: 'flex items-center gap-6'},
+                            e('div', {className: 'text-7xl animate-pulse-slow'}, '🌟'),
+                            e('div', null,
+                                e('h1', {className: 'text-6xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2'}, 'Roulement Pro'),
+                                e('p', {className: 'text-lg text-gray-600 font-semibold'}, 'Gestion Intelligente & Élégante')
+                            )
+                        ),
+                        e('div', {className: 'flex flex-col gap-3'},
+                            e('div', {className: 'px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-black text-xl text-center shadow-xl'}, `${getMonthName(month)} ${year}`),
+                            e('div', {className: 'px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-mono font-bold text-xl text-center shadow-xl'}, time.toLocaleTimeString('fr-FR'))
+                        )
+                    ),
+                    e('div', {className: 'mt-8 flex flex-wrap items-center justify-center gap-4'},
+                        e('div', {className: 'flex items-center gap-3 glass-effect px-6 py-4 rounded-2xl shadow-lg'},
+                            e('select',{value:month,onChange:ev=>setMonth(Number(ev.target.value)),className:'px-6 py-3 bg-white/80 border-2 border-indigo-300 rounded-xl text-lg font-bold focus:ring-4 focus:ring-indigo-400'},Array.from({length:12},(_,i)=>e('option',{key:i,value:i},getMonthName(i)))),
+                            e('input',{type:'number',value:year,onChange:ev=>setYear(Number(ev.target.value)),className:'w-28 px-6 py-3 bg-white/80 border-2 border-indigo-300 rounded-xl text-lg font-bold text-center focus:ring-4 focus:ring-indigo-400',min:2020,max:2030})
+                        ),
+                        e('div',{className:'flex items-center gap-3 glass-effect px-6 py-4 rounded-2xl shadow-lg'},
+                            e('button',{onClick:removeWorker,className:'w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-black text-2xl btn-modern shadow-lg'},'−'),
+                            e('span',{className:'w-16 text-center font-black text-3xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent'},numWorkers),
+                            e('button',{onClick:addWorker,className:'w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-black text-2xl btn-modern shadow-lg'},'+')
+                        ),
+                        e('button',{onClick:newSchedule,className:'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 text-white px-10 py-4 rounded-2xl font-black text-lg btn-modern shadow-2xl'},'🔄 Nouveau'),
+                        e('label',{htmlFor:'upload',className:'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-600 text-white px-10 py-4 rounded-2xl font-black text-lg btn-modern shadow-2xl cursor-pointer'},'📁 Import',e('input',{type:'file',id:'upload',accept:'.json',onChange:uploadJSON,className:'hidden'})),
+                        e('button',{onClick:downloadJSON,className:'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 text-white px-10 py-4 rounded-2xl font-black text-lg btn-modern shadow-2xl'},'💾 Export'),
+                        e('button',{onClick:()=>setEditMode(!editMode),className:`px-10 py-4 rounded-2xl font-black text-lg btn-modern shadow-2xl ${editMode?'bg-gradient-to-r from-red-500 to-pink-600 text-white':'bg-gradient-to-r from-amber-500 to-orange-600 text-white'}`},editMode?'❌ Fermer':'✏️ Modifier')
+                    )
+                ),
+
+                e('div',{className:'scroll-container glass-effect'},
+                    e('table',{className:'table-container'},
+                        e('thead',null,
+                            e('tr',null,
+                                e('th',{className:'th-worker border-b-4 border-blue-500'},'👷 OUVRIER'),
+                                Array.from({length:daysInMonth},(_,i)=>e('th',{key:i,className:`day-cell border-b-4 ${dailyCoverage[i] ? 'border-green-400 bg-gradient-to-b from-green-700 to-green-800' : 'border-red-400 bg-gradient-to-b from-red-700 to-red-800'}`},e('div',{className:'text-lg font-black'},i+1),e('div',{className:'text-[10px] font-bold tracking-wide'},getDayName(year,month,i+1)))),
+                                e('th',{className:'th-total border-b-4 border-green-500'},'📊 REPOS')
+                            )
+                        ),
+                        e('tbody',null,
+                            workers.map((worker,wIdx)=>
+                                e('tr',{key:wIdx,className:'border-b-2 hover:bg-purple-50/50 transition-all'},
+                                    e('td',{className:'td-worker border-r-4 border-blue-300'},e('div',{className:'font-black text-sm'},worker)),
+                                    schedule.map((day,dIdx)=>{
+                                        const assignment = day.workers[wIdx];
+                                        return e('td',{
+                                            key:dIdx,
+                                            className:`day-cell ${editMode ? 'cell-hover' : ''} ${getCellStyle(assignment)} border-r-2 border-white/50 transition-all`,
+                                            onClick:()=>clickCell(dIdx,wIdx)
+                                        },e('div',{className:'text-[10px] leading-tight'},assignment||'—'));
+                                    }),
+                                    e('td',{className:'td-total border-l-4 border-green-300'},e('div',{className:'text-xl font-black'},`${stats[wIdx].restDays}j`))
+                                )
+                            )
+                        )
+                    )
+                ),
+
+                showOptions && e('div',{className:'fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] animate-fadeIn',onClick:()=>{setShowOptions(false);setSelectedCell(null);}},
+                    e('div',{className:'glass-effect p-10 rounded-3xl shadow-2xl border-4 border-white/40 max-w-lg w-full animate-slideIn',onClick:ev=>ev.stopPropagation()},
+                        e('h3',{className:'text-4xl font-black text-center mb-8 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'},'🎯 Modifier Statut'),
+                        e('div',{className:'grid grid-cols-2 gap-4'},
+                            options.map(opt=>e('button',{
+                                key:opt,
+                                onClick:()=>selectOption(opt),
+                                className:`p-6 ${opt === 'Congé Période' ? 'col-span-2 bg-gradient-to-r from-lime-400 to-emerald-500' : 'bg-gradient-to-br from-blue-400 to-indigo-500'} hover:scale-105 text-white rounded-2xl border-2 border-white/50 font-black text-base shadow-xl transition-all`
+                            },opt === 'Congé Période' ? '📅 Congé (Période)' : opt))
+                        ),
+                        e('button',{onClick:()=>{setShowOptions(false);setSelectedCell(null);},className:'w-full mt-8 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white py-5 rounded-2xl font-black text-xl btn-modern shadow-xl'},'❌ Annuler')
+                    )
+                ),
+
+                showPeriodModal && e('div',{className:'fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[1100] animate-fadeIn',onClick:()=>{setShowPeriodModal(false);setPeriodStart('');setPeriodEnd('');}},
+                    e('div',{className:'glass-effect p-12 rounded-3xl shadow-2xl border-4 border-white/40 max-w-xl w-full animate-slideIn',onClick:ev=>ev.stopPropagation()},
+                        e('h3',{className:'text-4xl font-black text-center mb-10 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent'},'📅 Période de Congé'),
+                        e('div',{className:'space-y-8'},
+                            e('div',{className:'space-y-3'},
+                                e('label',{className:'block text-xl font-black text-gray-700'},'📍 Du jour:'),
+                                e('input',{type:'number',value:periodStart,onChange:ev=>setPeriodStart(ev.target.value),min:1,max:daysInMonth,placeholder:'1',className:'w-full px-8 py-5 text-3xl font-black text-center bg-blue-100 border-4 border-blue-400 rounded-2xl focus:ring-4 focus:ring-blue-500 shadow-lg'})
+                            ),
+                            e('div',{className:'text-center text-4xl font-black text-purple-600'},'↓'),
+                            e('div',{className:'space-y-3'},
+                                e('label',{className:'block text-xl font-black text-gray-700'},'📍 Au jour:'),
+                                e('input',{type:'number',value:periodEnd,onChange:ev=>setPeriodEnd(ev.target.value),min:1,max:daysInMonth,placeholder:daysInMonth,className:'w-full px-8 py-5 text-3xl font-black text-center bg-blue-100 border-4 border-blue-400 rounded-2xl focus:ring-4 focus:ring-blue-500 shadow-lg'})
+                            )
+                        ),
+                        e('div',{className:'flex gap-4 mt-10'},
+                            e('button',{onClick:applyPeriod,className:'flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white py-6 rounded-2xl font-black text-xl btn-modern shadow-2xl'},'✅ Appliquer'),
+                            e('button',{onClick:()=>{setShowPeriodModal(false);setPeriodStart('');setPeriodEnd('');},className:'flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white py-6 rounded-2xl font-black text-xl btn-modern shadow-2xl'},'❌ Annuler')
+                        )
+                    )
+                ),
+
+                e('div',{className:'glass-effect p-10 rounded-3xl border-4 border-white/40 shadow-2xl animate-fadeIn'},
+                    e('h3',{className:'text-4xl font-black text-center mb-8 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent'},'📊 Statistiques du Mois'),
+                    e('div',{className:'grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'},
+                        fullCoverage === daysInMonth ? 
+                            e('div',{className:'badge-success text-white p-8 rounded-2xl text-center shadow-2xl'},
+                                e('div',{className:'text-5xl mb-2'},'🎉'),
+                                e('div',{className:'text-2xl font-black'},'COUVERTURE'),
+                                e('div',{className:'text-4xl font-black mt-2'},'100%')
+                            )
+                        :
+                            e('div',{className:'badge-error text-white p-8 rounded-2xl text-center shadow-2xl'},
+                                e('div',{className:'text-5xl mb-2'},'⚠️'),
+                                e('div',{className:'text-2xl font-black'},'INCOMPLET'),
+                                e('div',{className:'text-3xl font-black mt-2'},`${fullCoverage}/${daysInMonth}`)
+                            ),
+                        maxConsecutiveRest <= 2 ?
+                            e('div',{className:'badge-success text-white p-8 rounded-2xl text-center shadow-2xl'},
+                                e('div',{className:'text-5xl mb-2'},'✅'),
+                                e('div',{className:'text-2xl font-black'},'MAX REPOS'),
+                                e('div',{className:'text-4xl font-black mt-2'},'2j')
+                            )
+                        :
+                            e('div',{className:'badge-error text-white p-8 rounded-2xl text-center shadow-2xl'},
+                                e('div',{className:'text-5xl mb-2'},'❌'),
+                                e('div',{className:'text-2xl font-black'},'ERREUR'),
+                                e('div',{className:'text-3xl font-black mt-2'},`${maxConsecutiveRest}j`)
+                            ),
+                        maxReservePerDay <= 1 ?
+                            e('div',{className:'badge-success text-white p-8 rounded-2xl text-center shadow-2xl'},
+                                e('div',{className:'text-5xl mb-2'},'🔶'),
+                                e('div',{className:'text-2xl font-black'},'RÉSERVE'),
+                                e('div',{className:'text-4xl font-black mt-2'},'1 MAX')
+                            )
+                        :
+                            e('div',{className:'badge-error text-white p-8 rounded-2xl text-center shadow-2xl'},
+                                e('div',{className:'text-5xl mb-2'},'❌'),
+                                e('div',{className:'text-2xl font-black'},'RÉSERVES'),
+                                e('div',{className:'text-3xl font-black mt-2'},maxReservePerDay)
+                            )
+                    ),
+                    e('div',{className:'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6'},
+                        stats.map((stat, i) =>
+                            e('div',{key:i,className:'stat-card text-white p-8 rounded-2xl shadow-2xl text-center'},
+                                e('div',{className:'font-black text-3xl mb-4'},`O${i+1}`),
+                                e('div',{className:'text-5xl font-black mb-2'},`${stat.workDays}`),
+                                e('div',{className:'text-sm font-bold mb-4 opacity-90'},'jours travail'),
+                                e('div',{className:'text-3xl font-black text-yellow-300 mb-1'},`${stat.reserveDays}`),
+                                e('div',{className:'text-xs font-bold mb-4 opacity-80'},'réserves'),
+                                e('div',{className:'text-3xl font-black text-red-300'},`${stat.restDays}`),
+                                e('div',{className:'text-xs font-bold opacity-80'},'jours repos')
+                            )
+                        )
+                    )
+                )
+            );
         }
-        
-        document.getElementById('monthSelect').addEventListener('change', function() {
-            selectedMonth = parseInt(this.value);
-            currentSchedule = null; // Reset schedule for new month
-            updateUI();
-        });
-        
-        document.getElementById('yearSelect').addEventListener('change', function() {
-            selectedYear = parseInt(this.value);
-            currentSchedule = null; // Reset schedule for new year
-            updateUI();
-        });
-        
-        // Initialize with seed for consistent first load
-        currentSchedule = generateSchedule(true);
-        renderTable();
+
+        ReactDOM.createRoot(document.getElementById('root')).render(e(App));
     </script>
 </body>
 </html>
